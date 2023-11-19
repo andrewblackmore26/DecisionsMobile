@@ -1216,6 +1216,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DialogueBox: {fileID: 1945695982}
   textComponent: {fileID: 1500474247}
+  image: {fileID: 1160275460}
   lines: []
   textSpeed: 0
   choices: []

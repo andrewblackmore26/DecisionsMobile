@@ -10,6 +10,7 @@ public class Dialogue : MonoBehaviour
 {
     public GameObject DialogueBox;
     public TextMeshProUGUI textComponent;
+    public GameObject image;
     public string[] lines;
     public float textSpeed;
     
@@ -34,7 +35,7 @@ public class Dialogue : MonoBehaviour
         dialogueNodes = Newtonsoft.Json.JsonConvert.DeserializeObject<List<DialogueNode>>(json);*/
 
         //LOAD SPRITE 
-		GameObject image = GameObject.Find("Image");
+		//GameObject image = GameObject.Find("Image");
 		image.GetComponent<Image>().sprite = Resources.Load<Sprite>("Images/Child/Angry");
         emotion = "Angry";
 		
