@@ -13,6 +13,8 @@ public class Dialogue : MonoBehaviour
     public string[] lines;
     public float textSpeed;
     
+    //use to set/check flags during story progression
+    private IDictionary<int, bool> flags = new Dictionary<int, bool>();
 
     private int index;
     private List<DialogueNode> dialogueNodes;
@@ -28,17 +30,12 @@ public class Dialogue : MonoBehaviour
     {   
         index = 0;
         textComponent.text = string.Empty;
-        string json = File.ReadAllText(@"./Assets/Scripts/Content.json"); 
-        dialogueNodes = Newtonsoft.Json.JsonConvert.DeserializeObject<List<DialogueNode>>(json);
-
-        //LOAD TEXTURE
-        // myTexture = Resources.Load ("Images/Default") as Texture2D;
-        // GameObject rawImage = GameObject.Find ("RawImage");
-		// rawImage.GetComponent<RawImage>().texture = myTexture;
+        /*string json = File.ReadAllText(@"./Assets/Scripts/Content.json"); 
+        dialogueNodes = Newtonsoft.Json.JsonConvert.DeserializeObject<List<DialogueNode>>(json);*/
 
         //LOAD SPRITE 
-		GameObject image = GameObject.Find("CharSprite");
-		image.GetComponent<Image>().sprite = Resources.Load<Sprite>("Images/Angry");
+		GameObject image = GameObject.Find("Image");
+		image.GetComponent<Image>().sprite = Resources.Load<Sprite>("Images/Child/Angry");
         emotion = "Angry";
 		
         StartDialogue();
