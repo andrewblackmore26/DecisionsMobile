@@ -28,11 +28,12 @@ public class Dialogue : MonoBehaviour
     public Button dialogueOption1;
     public Button dialogueOption2;
     void Start()
-    {   
+    {
+        Debug.Log("FUCK");
         index = 0;
         textComponent.text = string.Empty;
-        /*string json = File.ReadAllText(@"./Assets/Scripts/Content.json"); 
-        dialogueNodes = Newtonsoft.Json.JsonConvert.DeserializeObject<List<DialogueNode>>(json);*/
+        string json = File.ReadAllText(@"./Assets/Scripts/Content.json"); 
+        dialogueNodes = Newtonsoft.Json.JsonConvert.DeserializeObject<List<DialogueNode>>(json);
 
         //LOAD SPRITE 
 		//GameObject image = GameObject.Find("Image");
@@ -69,7 +70,7 @@ public class Dialogue : MonoBehaviour
 
     void StartDialogue() {
         StartCoroutine(TypeLine());
-        StartCoroutine(UpdateCharacterImage());
+        //StartCoroutine(UpdateCharacterImage());
         // display choices, if any, for this dialogue line
         if (dialogueNodes[index].choices != null) {
             DisplayChoices();

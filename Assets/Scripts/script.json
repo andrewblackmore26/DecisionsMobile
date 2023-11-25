@@ -1,0 +1,14 @@
+[
+	{
+	character: "oldman",
+	script:"bless ye ya young dickhead",
+	emotion: "angry",
+	image: "oldman"
+	},
+	{
+	character: "youngin",
+	script:"bless ye ya old fucker",
+	emotion: "angry",
+	image: "child"
+	}
+]

@@ -1,0 +1,50 @@
+[
+    {
+        "character": "Old Man",
+        "emotion": "Happy",
+        "script": "A child, they said. A suitable heir, they demanded. This is the price of preserving the family name.",
+        "choices": []
+    },
+    {
+        "character": "Jackson",
+        "emotion": "Angry",
+        "script": "Preserving the family name, you say? A noble cause, no doubt. But shouldn't one enjoy the journey?",
+        "choices": []
+    },
+    {
+        "character": "Old Man",
+        "emotion": "Angry",
+        "script": "Who dares to speak to me?",
+        "choices": [{
+            "text" : "You? You little runt."
+        },
+        {
+            "text" : "Oh, is it you?"
+        }]
+    },
+    {
+        "character": "Jackson",
+        "emotion": "Angry",
+        "script": "Oh, my apologies, good sir. Just saw you from above my book."
+    },
+    {
+        "character": "Old Man",
+        "emotion": "Angry",
+        "script": "And do you normally sit by the road, reading a book?"
+    },
+    {
+        "character": "Jackson",
+        "emotion": "Angry",
+        "script": "A source of knowledge, my lord. It helps me pass the time. Are you heading towards the farm house?"
+    },
+    {
+        "character": "Old Man",
+        "emotion": "Angry",
+        "script": "Yes I am, and I have no time for more frivolities."
+    },
+    {
+        "character": "Jackson",
+        "emotion": "Angry",
+        "script": "Of course, allow me to take you there. My parents should be inside."
+    }
+]
