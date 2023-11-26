@@ -17,57 +17,60 @@ public class DialogueParser : MonoBehaviour
         public string content;
         public int emotion;
         public string position;
-        public string[] options;
+        public List<Option> options;
+        public string next;
 
         public DialogueLine(string Name, string Content, int Emotion, string Position, string next)
-        {
-            name = Name;
-            content = Content;
-            emotion = Emotion;
-            position = Position;
-            options = new string[0];
-        }
-
-        public DialogueLine(string Name, string Content, int Emotion, string Position, string Options, string next)
         { 
             name = Name; 
             content = Content; 
             emotion = Emotion; 
             position = Position;
+            options = new List<Option>();
+            this.next = next;
+        }
 
+        public override string ToString()
+        {
+            return name + " " + content + " " + emotion;
         }
     }
 
     List<DialogueLine> lines;
+    Dictionary<string, List<DialogueLine>> dialogue = new Dictionary<string, List<DialogueLine>>();
 
     void Start()
     {
 
-        string file = "Assets/Data/Dialogue";
+        string file = "Assets/Data/Dialogue1";
         string sceneNum = EditorSceneManager.GetActiveScene().name;
-        System.Diagnostics.Debug.WriteLine(sceneNum);
         sceneNum = Regex.Replace(sceneNum, "[^0-9]", "");
         file += sceneNum;
         file += ".txt";
         print(file);
         lines = new List<DialogueLine>();
 
-        LoadDialogue(file);
-        foreach (DialogueLine line in lines)
+        LoadDialogues(file);
+        foreach (KeyValuePair<string, List<DialogueLine>> entry in dialogue)
         {
-            print(line.name + " " + line.content + " " + line.position);
-        };
+            //print("NEW KEY: " + entry.Key);
+            foreach (DialogueLine line in entry.Value)
+            {
+                print(line.ToString() + " : " + entry.Key);
+            }
+        }
     }
 
-    // Update is called once per frames
+    // Update is called once per frame
     void Update()
     {
 
     }
 
-    void LoadDialogue(string filename)
+    void LoadDialogues(string filename)
     {
         string line;
+        string key = "";
         StreamReader r = new StreamReader(filename);
         using (r)
         {
@@ -77,25 +80,44 @@ public class DialogueParser : MonoBehaviour
                 if (line != null || !string.IsNullOrEmpty(line))
                 {
                     string[] lineData = line.Split(';');
-                    if (lineData[0] == "Player")
+                    if (lineData[0] == "Key")
                     {
-                        DialogueLine lineEntry = new DialogueLine(lineData[0], "", 0, "");
-                        lineEntry.options = new string[lineData.Length - 1];
-                        for (int i = 1; i < lineData.Length; i++)
-                        {
-                            lineEntry.options[i - 1] = lineData[i];
-                        }
-                        lines.Add(lineEntry);
+                        key = lineData[1];
                     }
+                    else if (lineData[0] == "Options")
+                    {
+                        int count = int.Parse(lineData[1]);
+                        DialogueLine lineEntry = new DialogueLine(lineData[2], lineData[3], int.Parse(lineData[4]), lineData[5], "");
+                        for (int i = 0; i < count; i++)
+                        {
+                            lineData = r.ReadLine().Split(";");
+                            Option option = new Option(lineData[0], lineData[1]);
+                            lineEntry.options.Add(option);
+                        }
+                        addEntry(key, lineEntry);
+                    } 
                     else
                     {
-                        DialogueLine lineEntry = new DialogueLine(lineData[0], lineData[1], int.Parse(lineData[2]), lineData[3]);
-                        lines.Add(lineEntry);
+                        DialogueLine lineEntry = new DialogueLine(lineData[0], lineData[1], int.Parse(lineData[2]), lineData[3], "");
+                        addEntry(key, lineEntry);
                     }
                 }
             }
             while (line != null);
             r.Close();
+        }
+    }
+
+    void addEntry(string key, DialogueLine lineEntry)
+    {
+        if (dialogue.ContainsKey(key))
+        {
+            dialogue[key].Add(lineEntry);
+        }
+        else
+        {
+            dialogue[key] = new List<DialogueLine>();
+            dialogue[key].Add(lineEntry);
         }
     }
 
@@ -135,12 +157,12 @@ public class DialogueParser : MonoBehaviour
         return 0;
     }
 
-    public string[] GetOptions(int lineNumber)
+    /*public string[] GetOptions(int lineNumber)
     {
         if (lineNumber < lines.Count)
         {
             return lines[lineNumber].options;
         }
         return new string[0];
-    }
+    }*/
 }

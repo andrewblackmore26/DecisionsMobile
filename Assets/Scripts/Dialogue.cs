@@ -13,9 +13,6 @@ public class Dialogue : MonoBehaviour
     public GameObject image;
     public string[] lines;
     public float textSpeed;
-    
-    //use to set/check flags during story progression
-    private IDictionary<int, bool> flags = new Dictionary<int, bool>();
 
     private int index;
     private List<DialogueNode> dialogueNodes;
@@ -29,7 +26,7 @@ public class Dialogue : MonoBehaviour
     public Button dialogueOption2;
     void Start()
     {
-        Debug.Log("FUCK");
+        //Debug.Log("FUCK");
         index = 0;
         textComponent.text = string.Empty;
         string json = File.ReadAllText(@"./Assets/Scripts/Content.json"); 

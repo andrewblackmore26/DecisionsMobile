@@ -11,7 +11,7 @@ public class DialogueManager : MonoBehaviour
 
     public string dialogue, characterName;
     public int lineNum;
-    int pose;
+    int emotion;
     string position;
     string[] options;
     public bool playerTalking;
@@ -26,7 +26,7 @@ public class DialogueManager : MonoBehaviour
     {
         dialogue = "";
         characterName = "";
-        pose = 0;
+        emotion = 0;
         position = "L";
         playerTalking = false;
         parser = GameObject.Find("DialogueParser").GetComponent<DialogueParser>();
@@ -80,7 +80,7 @@ public class DialogueManager : MonoBehaviour
             playerTalking = false;
             characterName = parser.GetName(lineNum);
             dialogue = parser.GetContent(lineNum);
-            pose = parser.GetPose(lineNum);
+            emotion = parser.GetEmotion(lineNum);
             position = parser.GetPosition(lineNum);
             DisplayImages();
         }
@@ -89,9 +89,9 @@ public class DialogueManager : MonoBehaviour
             playerTalking = true;
             characterName = "";
             dialogue = "";
-            pose = 0;
+            emotion = 0;
             position = "";
-            options = parser.GetOptions(lineNum);
+            //options = parser.GetOptions(lineNum);
             CreateButtons();
         }
     }
