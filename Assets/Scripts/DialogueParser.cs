@@ -10,55 +10,24 @@ using System;
 
 public class DialogueParser : MonoBehaviour
 {
-
-    struct DialogueLine
-    {
-        public string name;
-        public string content;
-        public int emotion;
-        public string position;
-        public List<Option> options;
-        public string next;
-
-        public DialogueLine(string Name, string Content, int Emotion, string Position, string next)
-        { 
-            name = Name; 
-            content = Content; 
-            emotion = Emotion; 
-            position = Position;
-            options = new List<Option>();
-            this.next = next;
-        }
-
-        public override string ToString()
-        {
-            return name + " " + content + " " + emotion;
-        }
-    }
-
-    List<DialogueLine> lines;
-    Dictionary<string, List<DialogueLine>> dialogue = new Dictionary<string, List<DialogueLine>>();
+    public Dictionary<string, List<DialogueLine>> dialogue = new Dictionary<string, List<DialogueLine>>();
 
     void Start()
     {
-
         string file = "Assets/Data/Dialogue1";
         string sceneNum = EditorSceneManager.GetActiveScene().name;
         sceneNum = Regex.Replace(sceneNum, "[^0-9]", "");
         file += sceneNum;
         file += ".txt";
         print(file);
-        lines = new List<DialogueLine>();
-
         LoadDialogues(file);
-        foreach (KeyValuePair<string, List<DialogueLine>> entry in dialogue)
+        /*foreach (KeyValuePair<string, List<DialogueLine>> entry in dialogue)
         {
-            //print("NEW KEY: " + entry.Key);
             foreach (DialogueLine line in entry.Value)
             {
                 print(line.ToString() + " : " + entry.Key);
             }
-        }
+        }*/
     }
 
     // Update is called once per frame
@@ -121,48 +90,21 @@ public class DialogueParser : MonoBehaviour
         }
     }
 
-    public string GetPosition(int lineNumber)
+    public List<Option> GetOptions(DialogueLine line)
     {
-        if (lineNumber < lines.Count)
+        if (line.options.Count > 0)
         {
-            return lines[lineNumber].position;
+            return line.options;
         }
-        return "";
+        return null;
     }
 
-    public string GetName(int lineNumber)
+    public List<DialogueLine> GetLines(string key)
     {
-        if (lineNumber < lines.Count)
+        if (!string.IsNullOrEmpty(key))
         {
-            return lines[lineNumber].name;
+            return dialogue[key];
         }
-        return "";
+        return null;
     }
-
-    public string GetContent(int lineNumber)
-    {
-        if (lineNumber < lines.Count)
-        {
-            return lines[lineNumber].content;
-        }
-        return "";
-    }
-
-    public int GetEmotion(int lineNumber)
-    {
-        if (lineNumber < lines.Count)
-        {
-            return lines[lineNumber].emotion;
-        }
-        return 0;
-    }
-
-    /*public string[] GetOptions(int lineNumber)
-    {
-        if (lineNumber < lines.Count)
-        {
-            return lines[lineNumber].options;
-        }
-        return new string[0];
-    }*/
 }
