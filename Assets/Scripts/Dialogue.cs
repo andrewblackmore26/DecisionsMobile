@@ -35,12 +35,12 @@ public class Dialogue : MonoBehaviour
         //why do i need this line?
         parser = GameObject.Find("DialogueParser").GetComponent<DialogueParser>();
         lines = parser.GetLines("Start");
-        /*foreach (DialogueLine line in lines)
-        {
-            print(line.ToString());
-        }*/
 
-		image.GetComponent<Image>().sprite = Resources.Load<Sprite>("Images/Child/Angry");
+        dialogueOption0.onClick.AddListener(OnDialogueOption0Click);
+        dialogueOption1.onClick.AddListener(OnDialogueOption1Click);
+        dialogueOption2.onClick.AddListener(OnDialogueOption2Click);
+
+        image.GetComponent<Image>().sprite = Resources.Load<Sprite>("Images/Child/Angry");
 
         StartDialogue();
     }
@@ -48,12 +48,14 @@ public class Dialogue : MonoBehaviour
     // Update is called once per framez
     void Update()
     {   
-        if (Input.GetMouseButtonDown(0) && index < lines.Count) {
+        print("index: " + index);
+        if (Input.GetMouseButtonDown(0) && index + 1 < lines.Count) {
+            //text already loaded in dialoguebox
             if (textComponent.text == lines[index].content) {
                 textComponent.text = string.Empty;
                 index += 1;
+                //end of dialogue nodes
                 if (index == lines.Count) {
-                    //end of dialogue nodes
                     StopAllCoroutines();
                     DialogueBox.SetActive(false);   
                 } else {
@@ -72,14 +74,12 @@ public class Dialogue : MonoBehaviour
         StartCoroutine(UpdateCharacterImage());
         // display choices, if any, for this dialogue line
         if (lines[index].options.Count > 0) {
-            print("OH YEAH!");
             DisplayChoices();
         } else {
             dialogueOption0.gameObject.SetActive(false); 
             dialogueOption1.gameObject.SetActive(false); 
             dialogueOption2.gameObject.SetActive(false);
         }   
-        
     }
 
     //precondition: Must have choices available
@@ -88,7 +88,7 @@ public class Dialogue : MonoBehaviour
         TextMeshProUGUI txt;
         //defensive check to make sure our UI can support number of choices coming in
         if (options.Count > 3) {
-            Debug.LogError("More choices were given than can be supported" + options.Count);
+            Debug.LogError("More choices were given than can be supported: " + options.Count);
             foreach (Option option in options) {
                 Debug.LogError(option.content);
             }
@@ -149,6 +149,32 @@ public class Dialogue : MonoBehaviour
         yield return null; // Add a short delay if needed
     }
 
+    private void OnDialogueOption0Click()
+    {
+        string key = lines[index].options[0].next;
+        index = 0;
+        Debug.Log("Button 0 clicked!");
+        lines = parser.GetLines(key);
+        textComponent.text = string.Empty;
+        StartDialogue();
+    }
+
+    private void OnDialogueOption1Click()
+    {
+        string key = lines[index].options[1].next;
+        index = 0;
+        Debug.Log("Button 1 clicked!");
+        lines = parser.GetLines(key);
+        textComponent.text = string.Empty;
+        StartDialogue();
+    }
+
+    private void OnDialogueOption2Click()
+    {
+        index = 0;
+        Debug.Log("Button 2 clicked!");
+    }
+
     private string getEmotion(DialogueLine line)
     {
         string emotion = null;
@@ -170,7 +196,7 @@ public class Dialogue : MonoBehaviour
                 emotion = "Angry";
                 break;
             case 5:
-                emotion = "Worried";
+                emotion = "Suspicious";
                 break;
             default:
                 print("emotion for num not found");

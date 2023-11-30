@@ -65,6 +65,11 @@ public class DialogueParser : MonoBehaviour
                         }
                         addEntry(key, lineEntry);
                     } 
+                    else if (lineData.Length == 5)
+                    {
+                        DialogueLine lineEntry = new DialogueLine(lineData[0], lineData[1], int.Parse(lineData[2]), lineData[3], lineData[4]);
+                        addEntry(key, lineEntry);
+                    }
                     else
                     {
                         DialogueLine lineEntry = new DialogueLine(lineData[0], lineData[1], int.Parse(lineData[2]), lineData[3], "");
