@@ -5,6 +5,7 @@ using TMPro;
 using System.IO;
 using UnityEngine.UI;
 using System;
+using UnityEngine.EventSystems;
 
 public class Dialogue : MonoBehaviour
 {
@@ -17,9 +18,6 @@ public class Dialogue : MonoBehaviour
     public float textSpeed;
 
     private int index;
-    private List<DialogueNode> dialogueNodes;
-    [SerializeField] private GameObject[] choices;
-    private TextMeshProUGUI[] choicesText;
     Sprite sprite;
     // Start is called before the first frame updates
     public Button dialogueOption0;
@@ -49,9 +47,12 @@ public class Dialogue : MonoBehaviour
     void Update()
     {   
         print("index: " + index);
-        if (Input.GetMouseButtonDown(0) && index + 1 < lines.Count) {
+        //if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended && validInput) - for mobile
+        if (Input.GetMouseButtonDown(0) && index + 1 < lines.Count && !EventSystem.current.IsPointerOverGameObject()) {
             //text already loaded in dialoguebox
             if (textComponent.text == lines[index].content) {
+                //THE PATCH GOES SOMEWHERE HERE
+
                 textComponent.text = string.Empty;
                 index += 1;
                 //end of dialogue nodes
