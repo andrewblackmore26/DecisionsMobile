@@ -43,29 +43,34 @@ public class Dialogue : MonoBehaviour
         StartDialogue();
     }
 
-    // Update is called once per framez
+    // Update is called once per framez - //RELOCATE INDEX += 1;
     void Update()
     {   
         print("index: " + index);
         //if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended && validInput) - for mobile
-        if (Input.GetMouseButtonDown(0) && index + 1 < lines.Count && !EventSystem.current.IsPointerOverGameObject()) {
+        if (Input.GetMouseButtonDown(0) && textComponent.text != lines[index].content)
+        {
+            StopAllCoroutines();
+            textComponent.text = lines[index].content;
+        }
+        else if (Input.GetMouseButtonDown(0) && index + 1 < lines.Count) {
             //text already loaded in dialoguebox
-            if (textComponent.text == lines[index].content) {
-                //THE PATCH GOES SOMEWHERE HERE
-
-                textComponent.text = string.Empty;
-                index += 1;
-                //end of dialogue nodes
-                if (index == lines.Count) {
-                    StopAllCoroutines();
-                    DialogueBox.SetActive(false);   
-                } else {
-                    StartDialogue();
-                }   
+            textComponent.text = string.Empty;
+            index += 1;
+            //end of dialogue nodes
+            if (index == lines.Count) {
+                DialogueBox.SetActive(false);
             } else {
-                StopAllCoroutines();
-                textComponent.text = lines[index].content;
-            }
+                StartDialogue();
+            }   
+        }
+        else if (Input.GetMouseButtonDown(0) && index < lines.Count && lines[index].next != "")
+        {
+            string key = lines[index].next;
+            index = 0;
+            lines = parser.GetLines(key);
+            textComponent.text = string.Empty;
+            StartDialogue();
         }
     }
 
@@ -144,7 +149,6 @@ public class Dialogue : MonoBehaviour
 
     IEnumerator UpdateCharacterImage() {
         //need to add animation if different character says line
-        //print("Images/" + lines[index].name + "/" + getEmotion(lines[index]));
         sprite = Resources.Load<Sprite>("Images/" + lines[index].name + "/" + getEmotion(lines[index]));
         image.GetComponent<Image>().sprite = sprite;
         yield return null; // Add a short delay if needed
