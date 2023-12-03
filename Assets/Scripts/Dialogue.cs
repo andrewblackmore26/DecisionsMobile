@@ -26,7 +26,6 @@ public class Dialogue : MonoBehaviour
 
     void Start()
     {
-
         index = 0;
         textComponent.text = string.Empty;
 
@@ -37,8 +36,6 @@ public class Dialogue : MonoBehaviour
         dialogueOption0.onClick.AddListener(OnDialogueOption0Click);
         dialogueOption1.onClick.AddListener(OnDialogueOption1Click);
         dialogueOption2.onClick.AddListener(OnDialogueOption2Click);
-
-        image.GetComponent<Image>().sprite = Resources.Load<Sprite>("Images/Child/Angry");
 
         StartDialogue();
     }
