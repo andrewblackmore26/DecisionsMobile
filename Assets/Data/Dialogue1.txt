@@ -1,0 +1,16 @@
+Key;Start
+Spook;A child, they said. A suitable heir, they demanded. This is the price of preserving the family name.;0;L
+Child;Preserving the family name, you say? A noble cause, no doubt. But shouldn't one enjoy the journey?;1;R
+Options;2;Spook;Who dares to speak to me?;1;R
+You? You little runt.;Path1
+Oh, is it you?;Path2
+Key;Path1
+Child; That was a little rude you old geezer. Lookin' to get slapped?;4;R
+Spook; All right, just relax little guy. You don't want to strain yourself.;1;L;Path3
+Key;Path2
+Child; The one and only, a pleasure to make your aquaintance;1;R
+Spook; Hm... A little too confident perhaps.;0;L;Path3
+Key;Path3
+Child;So what brought you all the way out here? Couldn't be just all the fresh air and cows.;0;R
+Spook;I heard there was a boy with some talent in the area. Sound familiar?;0;L
+Child;If you're talking about talent, you're going to have to be specific. I have many.;1;R
