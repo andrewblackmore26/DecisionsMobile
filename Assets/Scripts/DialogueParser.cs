@@ -15,9 +15,9 @@ public class DialogueParser : MonoBehaviour
     void Start()
     {
         string file = "Assets/Data/Dialogue1";
-        string sceneNum = EditorSceneManager.GetActiveScene().name;
-        sceneNum = Regex.Replace(sceneNum, "[^0-9]", "");
-        file += sceneNum;
+        //string sceneNum = EditorSceneManager.GetActiveScene().name;
+        //sceneNum = Regex.Replace(sceneNum, "[^0-9]", "");
+        //file += sceneNum;
         file += ".txt";
         print(file);
         LoadDialogues(file);

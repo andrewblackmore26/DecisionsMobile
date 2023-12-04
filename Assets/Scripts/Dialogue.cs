@@ -32,6 +32,7 @@ public class Dialogue : MonoBehaviour
         //why do i need this line?
         parser = GameObject.Find("DialogueParser").GetComponent<DialogueParser>();
         lines = parser.GetLines("Start");
+        parser.GetComponent<DialogueParser>().enabled = false;
 
         dialogueOption0.onClick.AddListener(OnDialogueOption0Click);
         dialogueOption1.onClick.AddListener(OnDialogueOption1Click);
