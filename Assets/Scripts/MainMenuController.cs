@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
+//Controls Story Selection, displays Keys for Chapters, Tokens for inGame purchasables 
 public class MainMenuController : MonoBehaviour
 {
     // Start is called before the first frame update
