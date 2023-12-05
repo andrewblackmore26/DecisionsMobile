@@ -20,6 +20,7 @@ public class MainMenuController : MonoBehaviour
         
     }
 
+    //TEMP
     private void StartButtonClick()
     {
         SceneManager.LoadScene("GameScene1");
