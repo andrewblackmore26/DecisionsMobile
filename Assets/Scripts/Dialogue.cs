@@ -149,6 +149,7 @@ public class Dialogue : MonoBehaviour
         //need to add animation if different character says line
         sprite = Resources.Load<Sprite>("Images/" + lines[index].name + "/" + getEmotion(lines[index]));
         image.GetComponent<Image>().sprite = sprite;
+        image.transform.LeanMoveLocal(new Vector2(270, 40), 1);
         yield return null; // Add a short delay if needed
     }
 
