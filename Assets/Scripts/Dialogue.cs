@@ -9,20 +9,26 @@ using UnityEngine.EventSystems;
 
 public class Dialogue : MonoBehaviour
 {
+    //Used for loading DialogueLines
     public DialogueParser parser;
     public List<DialogueLine> lines;
 
+    //Used for altering DialogueBox state/text
     public GameObject DialogueBox;
     public TextMeshProUGUI textComponent;
     public GameObject image;
     public float textSpeed;
+    private Sprite sprite;
 
-    private int index;
-    Sprite sprite;
-    // Start is called before the first frame updates
+    //Used to alter Buttons corresponding to DialogueLine containing options
+    private List<Button> dialogueOptions = new List<Button>();
     public Button dialogueOption0;
     public Button dialogueOption1;
     public Button dialogueOption2;
+
+    //Used for logic controlling game
+    private int index;
+    private string prevChar;
 
     void Start()
     {
@@ -33,6 +39,10 @@ public class Dialogue : MonoBehaviour
         parser = GameObject.Find("DialogueParser").GetComponent<DialogueParser>();
         lines = parser.GetLines("Start");
         parser.GetComponent<DialogueParser>().enabled = false;
+
+        dialogueOptions.Add(dialogueOption0);
+        dialogueOptions.Add(dialogueOption1);
+        dialogueOptions.Add(dialogueOption2);
 
         dialogueOption0.onClick.AddListener(OnDialogueOption0Click);
         dialogueOption1.onClick.AddListener(OnDialogueOption1Click);
@@ -97,30 +107,23 @@ public class Dialogue : MonoBehaviour
                 Debug.LogError(option.content);
             }
         }
+
+        int count = 0;
         // enable and initalize the choices up to the amount of choices for this line of dialogue
-        if (lines[index].options.Count > 0)
+        for (int i = 0; i < options.Count; i++)
         {
-            txt = dialogueOption0.GetComponentInChildren<TextMeshProUGUI>();
-            txt.text = lines[index].options[0].content;
-            dialogueOption0.gameObject.SetActive(true);
-        }
-        if (lines[index].options.Count > 1)
-        {
-            txt = dialogueOption1.GetComponentInChildren<TextMeshProUGUI>();
-            txt.text = lines[index].options[1].content;
-            dialogueOption1.gameObject.SetActive(true);
-        }
-        if (lines[index].options.Count > 2)
-        {
-            txt = dialogueOption2.GetComponentInChildren<TextMeshProUGUI>();
-            txt.text = lines[index].options[2].content;
-            dialogueOption2.gameObject.SetActive(true);
+            txt = dialogueOptions[i].GetComponentInChildren<TextMeshProUGUI>();
+            txt.text = lines[index].options[i].content;
+            dialogueOptions[i].gameObject.SetActive(true);
+            count++;
         }
 
-        //go through the remaining choices the UI supports and make sure they're hidden
-        // for (int i = choiceIndex; i < choices.Length; i++) {
-        //     choices[i].gameObject.SetActive(false);
-        // }
+        // go through the remaining choices the UI supports and make sure they're hidden
+        while (count < 3)
+        {
+            dialogueOptions[count].gameObject.SetActive(false);
+            count++;
+        }
     }
 
     IEnumerator TypeLine()
@@ -149,7 +152,7 @@ public class Dialogue : MonoBehaviour
         //need to add animation if different character says line
         sprite = Resources.Load<Sprite>("Images/" + lines[index].name + "/" + getEmotion(lines[index]));
         image.GetComponent<Image>().sprite = sprite;
-        image.transform.LeanMoveLocal(new Vector2(270, 40), 1);
+        //image.transform.LeanMoveLocal(new Vector2(270, 40), 1);
         yield return null; // Add a short delay if needed
     }
 
