@@ -156,7 +156,14 @@ public class Dialogue : MonoBehaviour
                 imageLeft.GetComponent<Image>().sprite = sprite;
             } else if (lines[index].position == "R")
             {
-                imageRight.GetComponent<Image>().sprite = sprite;
+                if (prevPosR == 1)
+                {
+                    imageRight.GetComponent<Image>().sprite = sprite;
+                }
+                else if (prevPosR == 2)
+                {
+                    imageRight2.GetComponent<Image>().sprite = sprite;
+                }
             }
         }
         yield return null; // Add a short delay if needed
