@@ -16,7 +16,8 @@ public class Dialogue : MonoBehaviour
     //Used for altering DialogueBox state/text
     public GameObject DialogueBox;
     public TextMeshProUGUI textComponent;
-    public GameObject image;
+    public GameObject imageLeft;
+    public GameObject imageRight;
     public float textSpeed;
     private Sprite sprite;
 
@@ -27,15 +28,15 @@ public class Dialogue : MonoBehaviour
     public Button dialogueOption2;
 
     //Used for logic controlling game
-    private int index;
-    private string prevChar;
+    private int index = 0;
+    private string prevChar = "";
+    private string prevPos = "";
 
     void Start()
     {
         index = 0;
         textComponent.text = string.Empty;
 
-        //why do i need this line?
         parser = GameObject.Find("DialogueParser").GetComponent<DialogueParser>();
         lines = parser.GetLines("Start");
         parser.GetComponent<DialogueParser>().enabled = false;
@@ -139,9 +140,57 @@ public class Dialogue : MonoBehaviour
     IEnumerator UpdateCharacterImage() {
         //need to add animation if different character says line
         sprite = Resources.Load<Sprite>("Images/" + lines[index].name + "/" + getEmotion(lines[index]));
-        image.GetComponent<Image>().sprite = sprite;
-        //image.transform.LeanMoveLocal(new Vector2(270, 40), 1);
+        
+        //It's a different character saying a line
+        if (prevChar != lines[index].name)
+        {
+            prevChar = lines[index].name;
+            
+            PlayExitAnimation();
+
+        } else //when character is the same
+        {
+            //Will have to put blur for image transition
+            if (lines[index].position == "L")
+            {
+                imageLeft.GetComponent<Image>().sprite = sprite;
+            } else if (lines[index].position == "R")
+            {
+                imageRight.GetComponent<Image>().sprite = sprite;
+            }
+        }
         yield return null; // Add a short delay if needed
+    }
+
+    private void PlayExitAnimation()
+    {
+        if (prevPos == "")
+        {
+            PlayEntryAnimation();
+        } else if (prevPos == "L")
+        {
+            imageLeft.transform.LeanMoveLocal(new Vector2(-964, -292), 0.5f).setEaseOutQuart().setOnComplete(() => PlayEntryAnimation());
+        } else if (prevPos == "R")
+        {
+            imageRight.transform.LeanMoveLocal(new Vector2(971, -292), 0.5f).setEaseOutQuart().setOnComplete(() => PlayEntryAnimation());
+        }
+        prevPos = lines[index].position;
+    }
+
+    private void PlayEntryAnimation()
+    {
+        if (lines[index].position == "L")
+        {
+            imageLeft.GetComponent<Image>().sprite = sprite;
+            imageLeft.transform.LeanMoveLocal(new Vector2(-114, -82), 0.5f).setEaseOutQuart();
+        } else if (lines[index].position == "R")
+        {
+            imageRight.GetComponent<Image>().sprite = sprite;
+            imageRight.transform.LeanMoveLocal(new Vector2(114, -82), 0.5f).setEaseOutQuart();
+        } else
+        {
+            Debug.Log("No position for image given: error!");
+        }
     }
 
     private void OnDialogueOption0Click()
