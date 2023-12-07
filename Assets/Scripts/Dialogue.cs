@@ -18,6 +18,7 @@ public class Dialogue : MonoBehaviour
     public TextMeshProUGUI textComponent;
     public GameObject imageLeft;
     public GameObject imageRight;
+    public GameObject imageRight2;
     public float textSpeed;
     private Sprite sprite;
 
@@ -31,6 +32,7 @@ public class Dialogue : MonoBehaviour
     private int index = 0;
     private string prevChar = "";
     private string prevPos = "";
+    private int prevPosR = 0;
 
     void Start()
     {
@@ -145,12 +147,10 @@ public class Dialogue : MonoBehaviour
         if (prevChar != lines[index].name)
         {
             prevChar = lines[index].name;
-            
             PlayExitAnimation();
-
         } else //when character is the same
         {
-            //Will have to put blur for image transition
+            // TODO -> Will have to put blur for image transition
             if (lines[index].position == "L")
             {
                 imageLeft.GetComponent<Image>().sprite = sprite;
@@ -164,15 +164,21 @@ public class Dialogue : MonoBehaviour
 
     private void PlayExitAnimation()
     {
-        if (prevPos == "")
+        if (prevPos == "") //first DialogueLine
         {
             PlayEntryAnimation();
-        } else if (prevPos == "L")
+        } else if (prevPos == "L") //previous character on Left
         {
             imageLeft.transform.LeanMoveLocal(new Vector2(-964, -292), 0.5f).setEaseOutQuart().setOnComplete(() => PlayEntryAnimation());
-        } else if (prevPos == "R")
+        } else if (prevPos == "R") //previous character on Right
         {
-            imageRight.transform.LeanMoveLocal(new Vector2(971, -292), 0.5f).setEaseOutQuart().setOnComplete(() => PlayEntryAnimation());
+            if (prevPosR == 1)
+            {
+                imageRight.transform.LeanMoveLocal(new Vector2(971, -292), 0.5f).setEaseOutQuart().setOnComplete(() => PlayEntryAnimation());
+            } else if (prevPosR == 2)
+            {
+                imageRight2.transform.LeanMoveLocal(new Vector2(971, -292), 0.5f).setEaseOutQuart().setOnComplete(() => PlayEntryAnimation());
+            }            
         }
         prevPos = lines[index].position;
     }
@@ -185,8 +191,17 @@ public class Dialogue : MonoBehaviour
             imageLeft.transform.LeanMoveLocal(new Vector2(-114, -82), 0.5f).setEaseOutQuart();
         } else if (lines[index].position == "R")
         {
-            imageRight.GetComponent<Image>().sprite = sprite;
-            imageRight.transform.LeanMoveLocal(new Vector2(114, -82), 0.5f).setEaseOutQuart();
+            if (prevPosR < 2)
+            {
+                imageRight2.GetComponent<Image>().sprite = sprite;
+                imageRight2.transform.LeanMoveLocal(new Vector2(114, -82), 0.5f).setEaseOutQuart();
+                prevPosR = 2;
+            } else if (prevPosR == 2)
+            {
+                imageRight.GetComponent<Image>().sprite = sprite;
+                imageRight.transform.LeanMoveLocal(new Vector2(114, -82), 0.5f).setEaseOutQuart();
+                prevPosR = 1;
+            }   
         } else
         {
             Debug.Log("No position for image given: error!");
