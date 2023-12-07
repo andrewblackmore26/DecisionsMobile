@@ -136,18 +136,6 @@ public class Dialogue : MonoBehaviour
         }
     }
 
-    //CURRENTLY UNUSED
-    void NextLine() {
-        if (index < lines.Count - 1) {
-            index++;
-            textComponent.text = string.Empty;
-            StartCoroutine(TypeLine());
-        } else {
-            //WTF does this do
-            gameObject.SetActive(false);
-        }
-    }
-
     IEnumerator UpdateCharacterImage() {
         //need to add animation if different character says line
         sprite = Resources.Load<Sprite>("Images/" + lines[index].name + "/" + getEmotion(lines[index]));
@@ -158,28 +146,27 @@ public class Dialogue : MonoBehaviour
 
     private void OnDialogueOption0Click()
     {
-        string key = lines[index].options[0].next;
-        index = 0;
-        Debug.Log("Button 0 clicked!");
-        lines = parser.GetLines(key);
-        textComponent.text = string.Empty;
-        StartDialogue();
+        handleDialogueOptionClick(0);
     }
 
     private void OnDialogueOption1Click()
     {
-        string key = lines[index].options[1].next;
-        index = 0;
-        Debug.Log("Button 1 clicked!");
-        lines = parser.GetLines(key);
-        textComponent.text = string.Empty;
-        StartDialogue();
+        handleDialogueOptionClick(1);
     }
 
     private void OnDialogueOption2Click()
     {
+        handleDialogueOptionClick(2);
+    }
+
+    private void handleDialogueOptionClick(int num)
+    {
+        string key = lines[index].options[num].next;
         index = 0;
-        Debug.Log("Button 2 clicked!");
+        Debug.Log("Button " + num + " clicked!");
+        lines = parser.GetLines(key);
+        textComponent.text = string.Empty;
+        StartDialogue();
     }
 
     private string getEmotion(DialogueLine line)
