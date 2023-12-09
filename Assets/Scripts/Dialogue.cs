@@ -16,9 +16,9 @@ public class Dialogue : MonoBehaviour
     //Used for altering DialogueBox state/text
     public GameObject DialogueBox;
     public TextMeshProUGUI textComponent;
-    public GameObject imageLeft;
-    public GameObject imageRight;
-    public GameObject imageRight2;
+    public Image imageLeft;
+    public Image imageRight;
+    public Image imageRight2;
     public GameObject backgroundImage;
     public float textSpeed;
     private Sprite sprite;
@@ -48,6 +48,9 @@ public class Dialogue : MonoBehaviour
         imageLeft.transform.localScale = Vector2.zero;
         imageRight.transform.localScale = Vector2.zero;
         imageRight2.transform.localScale = Vector2.zero;
+        var tempColor = imageLeft.color;
+        tempColor.a = 0.5f;
+        imageLeft.color = tempColor;
 
         //setting up Options
         dialogueOptions.Add(dialogueOption0);
