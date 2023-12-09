@@ -19,6 +19,7 @@ public class Dialogue : MonoBehaviour
     public GameObject imageLeft;
     public GameObject imageRight;
     public GameObject imageRight2;
+    public GameObject backgroundImage;
     public float textSpeed;
     private Sprite sprite;
 
@@ -43,6 +44,12 @@ public class Dialogue : MonoBehaviour
         lines = parser.GetLines("Start");
         parser.GetComponent<DialogueParser>().enabled = false;
 
+        //setting up images
+        imageLeft.transform.localScale = Vector2.zero;
+        imageRight.transform.localScale = Vector2.zero;
+        imageRight2.transform.localScale = Vector2.zero;
+
+        //setting up Options
         dialogueOptions.Add(dialogueOption0);
         dialogueOptions.Add(dialogueOption1);
         dialogueOptions.Add(dialogueOption2);
@@ -50,6 +57,7 @@ public class Dialogue : MonoBehaviour
         dialogueOption0.onClick.AddListener(OnDialogueOption0Click);
         dialogueOption1.onClick.AddListener(OnDialogueOption1Click);
         dialogueOption2.onClick.AddListener(OnDialogueOption2Click);
+        
 
         StartDialogue();
     }
@@ -174,18 +182,32 @@ public class Dialogue : MonoBehaviour
         if (prevPos == "") //first DialogueLine
         {
             PlayEntryAnimation();
-        } else if (prevPos == "L") //previous character on Left
+        } else if (prevPos == "L") //previous character on Left - Useful function: setOnComplete(() => function());
         {
-            imageLeft.transform.LeanMoveLocal(new Vector2(-964, -292), 0.5f).setEaseOutQuart().setOnComplete(() => PlayEntryAnimation());
+            imageLeft.transform.LeanMoveLocal(new Vector2(-964, -292), 0.5f).setEaseOutQuart();
+            imageLeft.transform.LeanScale(Vector2.zero, 0.5f);
+            PlayEntryAnimation();
+            if (lines[index].position == "R") // Move backgroundImage towards new speaker
+            {
+                backgroundImage.transform.LeanMoveLocal(new Vector2(1.5f, 0), 0.3f);
+            }
         } else if (prevPos == "R") //previous character on Right
         {
             if (prevPosR == 1)
             {
-                imageRight.transform.LeanMoveLocal(new Vector2(971, -292), 0.5f).setEaseOutQuart().setOnComplete(() => PlayEntryAnimation());
+                imageRight.transform.LeanMoveLocal(new Vector2(971, -292), 0.5f);
+                imageRight.transform.LeanScale(Vector2.zero, 0.5f);
+                PlayEntryAnimation();
             } else if (prevPosR == 2)
             {
-                imageRight2.transform.LeanMoveLocal(new Vector2(971, -292), 0.5f).setEaseOutQuart().setOnComplete(() => PlayEntryAnimation());
-            }            
+                imageRight2.transform.LeanMoveLocal(new Vector2(971, -292), 0.5f);
+                imageRight2.transform.LeanScale(Vector2.zero, 0.5f);
+                PlayEntryAnimation();
+            }
+            if (lines[index].position == "L") // Move backgroundImage towards new speaker
+            {
+                backgroundImage.transform.LeanMoveLocal(new Vector2(2.5f, 0), 0.3f);
+            }
         }
         prevPos = lines[index].position;
     }
@@ -195,18 +217,21 @@ public class Dialogue : MonoBehaviour
         if (lines[index].position == "L")
         {
             imageLeft.GetComponent<Image>().sprite = sprite;
-            imageLeft.transform.LeanMoveLocal(new Vector2(-114, -82), 0.5f).setEaseOutQuart();
+            imageLeft.transform.LeanMoveLocal(new Vector2(-114, -82), 0.5f);
+            imageLeft.transform.LeanScale(Vector2.one, 0.5f);
         } else if (lines[index].position == "R")
         {
             if (prevPosR < 2)
             {
                 imageRight2.GetComponent<Image>().sprite = sprite;
-                imageRight2.transform.LeanMoveLocal(new Vector2(114, -82), 0.5f).setEaseOutQuart();
+                imageRight2.transform.LeanMoveLocal(new Vector2(114, -82), 0.5f);
+                imageRight2.transform.LeanScale(Vector2.one, 0.5f);
                 prevPosR = 2;
             } else if (prevPosR == 2)
             {
                 imageRight.GetComponent<Image>().sprite = sprite;
-                imageRight.transform.LeanMoveLocal(new Vector2(114, -82), 0.5f).setEaseOutQuart();
+                imageRight.transform.LeanMoveLocal(new Vector2(114, -82), 0.5f);
+                imageRight.transform.LeanScale(Vector2.one, 0.5f);
                 prevPosR = 1;
             }   
         } else
