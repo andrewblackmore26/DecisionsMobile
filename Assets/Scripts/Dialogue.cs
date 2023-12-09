@@ -48,9 +48,15 @@ public class Dialogue : MonoBehaviour
         imageLeft.transform.localScale = Vector2.zero;
         imageRight.transform.localScale = Vector2.zero;
         imageRight2.transform.localScale = Vector2.zero;
-        var tempColor = imageLeft.color;
-        tempColor.a = 0.5f;
-        imageLeft.color = tempColor;
+        //var tempColor = imageLeft.color;
+        //tempColor.a = 0.5f;
+        //imageLeft.color = tempColor;
+        LeanTween.value(gameObject, 0, 1, 1).setOnUpdate((float val) =>
+        {
+            Color c = imageLeft.color;
+            c.a = val;
+            imageLeft.color = c;
+        });
 
         //setting up Options
         dialogueOptions.Add(dialogueOption0);
