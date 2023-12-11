@@ -190,12 +190,10 @@ public class Dialogue : MonoBehaviour
     {
         if (prevPos == "") //first DialogueLine
         {
-            PlayEntryAnimation();
         } else if (prevPos == "L") //previous character on Left - Useful function: setOnComplete(() => function());
         {
-            imageLeft.transform.LeanMoveLocal(new Vector2(-964, -292), 0.5f).setEaseOutQuart();
+            imageLeft.transform.LeanMoveLocal(new Vector2(-964, -292), 0.5f);
             imageLeft.transform.LeanScale(Vector2.zero, 0.5f);
-            PlayEntryAnimation();
             if (lines[index].position == "R") // Move backgroundImage towards new speaker
             {
                 backgroundImage.transform.LeanMoveLocal(new Vector2(1.5f, 0), 0.3f);
@@ -206,19 +204,44 @@ public class Dialogue : MonoBehaviour
             {
                 imageRight.transform.LeanMoveLocal(new Vector2(971, -292), 0.5f);
                 imageRight.transform.LeanScale(Vector2.zero, 0.5f);
-                PlayEntryAnimation();
+                
             } else if (prevPosR == 2)
             {
                 imageRight2.transform.LeanMoveLocal(new Vector2(971, -292), 0.5f);
                 imageRight2.transform.LeanScale(Vector2.zero, 0.5f);
-                PlayEntryAnimation();
             }
             if (lines[index].position == "L") // Move backgroundImage towards new speaker
             {
                 backgroundImage.transform.LeanMoveLocal(new Vector2(2.5f, 0), 0.3f);
             }
         }
+        PlayEntryAnimation();
         prevPos = lines[index].position;
+    }
+
+    private void imageExit(Image image)
+    {
+        if (prevPos == "L")
+        {
+            image.transform.LeanMoveLocal(new Vector2(-964, -292), 0.5f);
+        } else if (prevPos == "R") { 
+            image.transform.LeanMoveLocal(new Vector2(971, -292), 0.5f);
+        }
+        image.transform.LeanScale(Vector2.zero, 0.5f);
+        /*LeanTween.value(gameObject, 0, 1, 1).setOnUpdate((float val) =>
+        {
+            Color c = imageLeft.color;
+            c.a = val;
+            imageLeft.color = c;
+        });*/
+        if (lines[index].position == "R") // Move backgroundImage towards new speaker
+        {
+            backgroundImage.transform.LeanMoveLocal(new Vector2(1.5f, 0), 0.3f);
+        } else if (lines[index].position == "L")
+        {
+            backgroundImage.transform.LeanMoveLocal(new Vector2(2.5f, 0), 0.3f);
+        }
+        PlayEntryAnimation();
     }
 
     private void PlayEntryAnimation()
