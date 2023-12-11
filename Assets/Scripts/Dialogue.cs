@@ -234,46 +234,40 @@ public class Dialogue : MonoBehaviour
     {
         if (lines[index].position == "L")
         {
-            imageLeft.GetComponent<Image>().sprite = sprite;
-            imageLeft.transform.LeanMoveLocal(new Vector2(-114, -82), 0.5f);
-            imageLeft.transform.LeanScale(Vector2.one, 0.5f);
-            LeanTween.value(gameObject, 0, 1, 0.5f).setOnUpdate((float val) =>
-            {
-                Color c = imageLeft.color;
-                c.a = val;
-                imageLeft.color = c;
-            });
+            characterEntry(imageLeft);
         } else if (lines[index].position == "R")
         {
             if (prevPosR < 2)
             {
-                imageRight2.GetComponent<Image>().sprite = sprite;
-                imageRight2.transform.LeanMoveLocal(new Vector2(114, -82), 0.5f);
-                imageRight2.transform.LeanScale(Vector2.one, 0.5f);
+                characterEntry(imageRight2);
                 prevPosR = 2;
-                LeanTween.value(gameObject, 0, 1, 0.5f).setOnUpdate((float val) =>
-                {
-                    Color c = imageRight.color;
-                    c.a = val;
-                    imageRight.color = c;
-                });
             } else if (prevPosR == 2)
             {
-                imageRight.GetComponent<Image>().sprite = sprite;
-                imageRight.transform.LeanMoveLocal(new Vector2(114, -82), 0.5f);
-                imageRight.transform.LeanScale(Vector2.one, 0.5f);
+                characterEntry(imageRight);
                 prevPosR = 1;
-                LeanTween.value(gameObject, 0, 1, 0.5f).setOnUpdate((float val) =>
-                {
-                    Color c = imageRight2.color;
-                    c.a = val;
-                    imageRight2.color = c;
-                });
             }   
         } else
         {
             Debug.Log("No position for image given: error!");
         }
+    }
+
+    private void characterEntry(Image image)
+    {
+        image.GetComponent<Image>().sprite = sprite;
+        if (lines[index].position == "L")
+        {
+            image.transform.LeanMoveLocal(new Vector2(-114, -82), 0.5f);
+        } else if (lines[index].position == "R") {
+            image.transform.LeanMoveLocal(new Vector2(114, -82), 0.5f);
+        }
+        image.transform.LeanScale(Vector2.one, 0.5f);
+        LeanTween.value(gameObject, 0, 1, 0.5f).setOnUpdate((float val) =>
+        {
+            Color c = image.color;
+            c.a = val;
+            image.color = c;
+        });
     }
 
     private void OnDialogueOption0Click()
