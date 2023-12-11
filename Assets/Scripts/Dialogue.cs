@@ -51,12 +51,12 @@ public class Dialogue : MonoBehaviour
         //var tempColor = imageLeft.color;
         //tempColor.a = 0.5f;
         //imageLeft.color = tempColor;
-        LeanTween.value(gameObject, 0, 1, 1).setOnUpdate((float val) =>
+        /*LeanTween.value(gameObject, 0, 1, 1).setOnUpdate((float val) =>
         {
             Color c = imageLeft.color;
             c.a = val;
             imageLeft.color = c;
-        });
+        });*/
 
         //setting up Options
         dialogueOptions.Add(dialogueOption0);
@@ -188,38 +188,25 @@ public class Dialogue : MonoBehaviour
 
     private void PlayExitAnimation()
     {
-        if (prevPos == "") //first DialogueLine
+        if (prevPos == "L") //previous character on Left - Useful function: setOnComplete(() => function());
         {
-        } else if (prevPos == "L") //previous character on Left - Useful function: setOnComplete(() => function());
-        {
-            imageLeft.transform.LeanMoveLocal(new Vector2(-964, -292), 0.5f);
-            imageLeft.transform.LeanScale(Vector2.zero, 0.5f);
-            if (lines[index].position == "R") // Move backgroundImage towards new speaker
-            {
-                backgroundImage.transform.LeanMoveLocal(new Vector2(1.5f, 0), 0.3f);
-            }
+            characterExit(imageLeft);
         } else if (prevPos == "R") //previous character on Right
         {
             if (prevPosR == 1)
             {
-                imageRight.transform.LeanMoveLocal(new Vector2(971, -292), 0.5f);
-                imageRight.transform.LeanScale(Vector2.zero, 0.5f);
+                characterExit(imageRight);
                 
             } else if (prevPosR == 2)
             {
-                imageRight2.transform.LeanMoveLocal(new Vector2(971, -292), 0.5f);
-                imageRight2.transform.LeanScale(Vector2.zero, 0.5f);
-            }
-            if (lines[index].position == "L") // Move backgroundImage towards new speaker
-            {
-                backgroundImage.transform.LeanMoveLocal(new Vector2(2.5f, 0), 0.3f);
+                characterExit(imageRight2);
             }
         }
         PlayEntryAnimation();
         prevPos = lines[index].position;
     }
 
-    private void imageExit(Image image)
+    private void characterExit(Image image)
     {
         if (prevPos == "L")
         {
@@ -228,12 +215,12 @@ public class Dialogue : MonoBehaviour
             image.transform.LeanMoveLocal(new Vector2(971, -292), 0.5f);
         }
         image.transform.LeanScale(Vector2.zero, 0.5f);
-        /*LeanTween.value(gameObject, 0, 1, 1).setOnUpdate((float val) =>
+        LeanTween.value(gameObject, 1, 0f, 0.5f).setOnUpdate((float val) =>
         {
-            Color c = imageLeft.color;
+            Color c = image.color;
             c.a = val;
-            imageLeft.color = c;
-        });*/
+            image.color = c;
+        });
         if (lines[index].position == "R") // Move backgroundImage towards new speaker
         {
             backgroundImage.transform.LeanMoveLocal(new Vector2(1.5f, 0), 0.3f);
@@ -241,7 +228,6 @@ public class Dialogue : MonoBehaviour
         {
             backgroundImage.transform.LeanMoveLocal(new Vector2(2.5f, 0), 0.3f);
         }
-        PlayEntryAnimation();
     }
 
     private void PlayEntryAnimation()
@@ -251,6 +237,12 @@ public class Dialogue : MonoBehaviour
             imageLeft.GetComponent<Image>().sprite = sprite;
             imageLeft.transform.LeanMoveLocal(new Vector2(-114, -82), 0.5f);
             imageLeft.transform.LeanScale(Vector2.one, 0.5f);
+            LeanTween.value(gameObject, 0, 1, 0.5f).setOnUpdate((float val) =>
+            {
+                Color c = imageLeft.color;
+                c.a = val;
+                imageLeft.color = c;
+            });
         } else if (lines[index].position == "R")
         {
             if (prevPosR < 2)
@@ -259,12 +251,24 @@ public class Dialogue : MonoBehaviour
                 imageRight2.transform.LeanMoveLocal(new Vector2(114, -82), 0.5f);
                 imageRight2.transform.LeanScale(Vector2.one, 0.5f);
                 prevPosR = 2;
+                LeanTween.value(gameObject, 0, 1, 0.5f).setOnUpdate((float val) =>
+                {
+                    Color c = imageRight.color;
+                    c.a = val;
+                    imageRight.color = c;
+                });
             } else if (prevPosR == 2)
             {
                 imageRight.GetComponent<Image>().sprite = sprite;
                 imageRight.transform.LeanMoveLocal(new Vector2(114, -82), 0.5f);
                 imageRight.transform.LeanScale(Vector2.one, 0.5f);
                 prevPosR = 1;
+                LeanTween.value(gameObject, 0, 1, 0.5f).setOnUpdate((float val) =>
+                {
+                    Color c = imageRight2.color;
+                    c.a = val;
+                    imageRight2.color = c;
+                });
             }   
         } else
         {
