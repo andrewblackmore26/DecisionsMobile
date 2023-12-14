@@ -48,15 +48,6 @@ public class Dialogue : MonoBehaviour
         imageLeft.transform.localScale = Vector2.zero;
         imageRight.transform.localScale = Vector2.zero;
         imageRight2.transform.localScale = Vector2.zero;
-        //var tempColor = imageLeft.color;
-        //tempColor.a = 0.5f;
-        //imageLeft.color = tempColor;
-        /*LeanTween.value(gameObject, 0, 1, 1).setOnUpdate((float val) =>
-        {
-            Color c = imageLeft.color;
-            c.a = val;
-            imageLeft.color = c;
-        });*/
 
         //setting up Options
         dialogueOptions.Add(dialogueOption0);
@@ -72,10 +63,10 @@ public class Dialogue : MonoBehaviour
     }
 
     // Update is called once per framez - //RELOCATE INDEX += 1;
+    //if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended && validInput) - for mobile, !EventSystem.current.IsPointerOverGameObject() for pc
     void Update()
     {   
         print("index: " + index);
-        //if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended && validInput) - for mobile
         if (Input.GetMouseButtonDown(0) && textComponent.text != lines[index].content)
         {
             StopAllCoroutines();
