@@ -174,7 +174,7 @@ public class Dialogue : MonoBehaviour
                 }
             }
         }
-        yield return null; // Add a short delay if needed
+        yield return null; // Add a short delay if needed.
     }
 
     private void PlayExitAnimation()
