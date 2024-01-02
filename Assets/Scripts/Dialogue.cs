@@ -248,7 +248,7 @@ public class Dialogue : MonoBehaviour
         image.GetComponent<Image>().sprite = sprite;
         if (lines[index].position == "L")
         {
-            image.transform.LeanMoveLocal(new Vector2(-114, -82), 0.5f);
+            image.transform.LeanMoveLocal(new Vector2(-150, 50), 0.5f);
         } else if (lines[index].position == "R") {
             image.transform.LeanMoveLocal(new Vector2(114, -82), 0.5f);
         }
