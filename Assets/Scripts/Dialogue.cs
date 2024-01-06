@@ -26,7 +26,12 @@ public class Dialogue : MonoBehaviour
     public Image emotionLeft;
 
     public Image imageRight;
+    public Image charRight;
+    public Image emotionRight;
+
     public Image imageRight2;
+    public Image charRight2;
+    public Image emotionRight2;
 
     public float transitionTime = 0.4f;
 
@@ -144,19 +149,9 @@ public class Dialogue : MonoBehaviour
         }
     }
 
-    IEnumerator TypeLine()
-    {
-        // Type each character 1 by 1
-        foreach (char c in lines[index].content)
-        {
-            textComponent.text += c;
-            yield return new WaitForSeconds(textSpeed);
-        }
-    }
-
     IEnumerator UpdateCharacterImage() {
-        //need to add animation if different character says line
         sprite = Resources.Load<Sprite>("Images/" + lines[index].name + "/" + lines[index].position + "/" + getEmotion(lines[index]));
+        print("Images/" + lines[index].name + "/" + lines[index].position + "/" + getEmotion(lines[index]));
         
         //It's a different character saying a line
         if (prevChar != lines[index].name)
@@ -175,11 +170,13 @@ public class Dialogue : MonoBehaviour
             {
                 if (prevPosR == 1)
                 {
-                    imageRight.GetComponent<Image>().sprite = sprite;
+                    StartCoroutine(ChangeColor(emotionRight));
+                    charRight.GetComponent<Image>().sprite = sprite;
                 }
                 else if (prevPosR == 2)
                 {
-                    imageRight2.GetComponent<Image>().sprite = sprite;
+                    StartCoroutine(ChangeColor(emotionLeft));
+                    charRight2.GetComponent<Image>().sprite = sprite;
                 }
             }
         }
@@ -236,16 +233,22 @@ public class Dialogue : MonoBehaviour
     {
         if (lines[index].position == "L")
         {
+            charLeft.GetComponent<Image>().sprite = sprite;
             characterEntry(imageLeft);
+            StartCoroutine(ChangeColor(emotionLeft));
         } else if (lines[index].position == "R")
         {
             if (prevPosR < 2)
             {
+                charRight2.GetComponent<Image>().sprite = sprite;
                 characterEntry(imageRight2);
+                StartCoroutine(ChangeColor(emotionRight2));
                 prevPosR = 2;
             } else if (prevPosR == 2)
             {
+                charRight.GetComponent<Image>().sprite = sprite;
                 characterEntry(imageRight);
+                StartCoroutine(ChangeColor(emotionRight));
                 prevPosR = 1;
             }   
         } else
@@ -262,7 +265,7 @@ public class Dialogue : MonoBehaviour
         {
             image.transform.LeanMoveLocal(new Vector2(-150, 50), 0.5f);
         } else if (lines[index].position == "R") {
-            image.transform.LeanMoveLocal(new Vector2(114, -82), 0.5f);
+            image.transform.LeanMoveLocal(new Vector2(150, 50), 0.5f);
         }
         image.transform.LeanScale(Vector2.one, 0.5f);
         LeanTween.value(gameObject, 0, 1, 0.5f).setOnUpdate((float val) =>
@@ -346,6 +349,16 @@ public class Dialogue : MonoBehaviour
         }
         // Ensure the final color is exactly the target color
         image.color = targetColor;
+    }
+
+    IEnumerator TypeLine()
+    {
+        // Type each character 1 by 1
+        foreach (char c in lines[index].content)
+        {
+            textComponent.text += c;
+            yield return new WaitForSeconds(textSpeed);
+        }
     }
 
     private string getEmotion(DialogueLine line)
