@@ -28,7 +28,7 @@ public class Dialogue : MonoBehaviour
     public Image imageRight;
     public Image imageRight2;
 
-    public float transitionTime = 0.2f;
+    public float transitionTime = 0.4f;
 
     //Used to alter Buttons corresponding to DialogueLine containing options
     private List<Button> dialogueOptions = new List<Button>();
@@ -168,8 +168,9 @@ public class Dialogue : MonoBehaviour
             // TODO -> Will have to put blur for image transition
             if (lines[index].position == "L")
             {
+                StartCoroutine(ChangeColor(emotionLeft));
                 charLeft.GetComponent<Image>().sprite = sprite;
-                ChangeColorCoroutine(emotionLeft);
+                
             } else if (lines[index].position == "R")
             {
                 if (prevPosR == 1)
@@ -185,55 +186,7 @@ public class Dialogue : MonoBehaviour
         yield return null; // Add a short delay if needed.
     }
 
-    IEnumerator ChangeColorCoroutine(Image image) {
-        /*switch (lines[index].emotion)
-        {
-            case 0:
-                emotion = "Default";
-                break;
-            case 1:
-                emotion = "Happy";
-                break;
-            case 2:
-                emotion = "Sad";
-                break;
-            case 3:
-                emotion = "Surprised";
-                break;
-            case 4:
-                emotion = "Angry";
-                break;
-            case 5:
-                emotion = "Suspicious";
-                break;
-            default:
-                print("emotion for num not found");
-                break;
-        }*/
-        // Convert hex color code to Color
-        Color startColor = image.color;
-        Color targetColor;
-        ColorUtility.TryParseHtmlString("#76FF6D", out targetColor);
-
-        float elapsedTime = 0f;
-
-        while (elapsedTime < transitionTime)
-        {
-            // Calculate the interpolation factor (t) between 0 and 1 based on elapsed time and duration
-            float t = Mathf.Clamp01(elapsedTime / transitionTime);
-
-            // Use Color.Lerp to interpolate between the startColor and targetColor
-            image.color = Color.Lerp(startColor, targetColor, t);
-
-            // Increment the elapsed time
-            elapsedTime += Time.deltaTime;
-
-            // Wait for the next frame
-            yield return null;
-        }
-        // Ensure the final color is exactly the target color
-        image.color = targetColor;
-    }
+    
 
     private void PlayExitAnimation()
     {
@@ -343,6 +296,56 @@ public class Dialogue : MonoBehaviour
         lines = parser.GetLines(key);
         textComponent.text = string.Empty;
         StartDialogue();
+    }
+
+    IEnumerator ChangeColor(Image image)
+    {
+        Color targetColor;
+        ColorUtility.TryParseHtmlString("#FFFFFF", out targetColor);
+        switch (lines[index].emotion)
+        {
+            case 0:
+                ColorUtility.TryParseHtmlString("#FFFFFF", out targetColor);
+                break;
+            case 1:
+                ColorUtility.TryParseHtmlString("#76FF6D", out targetColor);
+                break;
+            case 2:
+                ColorUtility.TryParseHtmlString("#0E2349", out targetColor);
+                break;
+            case 3:
+                ColorUtility.TryParseHtmlString("#FFFA4A", out targetColor);
+                break;
+            case 4:
+                ColorUtility.TryParseHtmlString("#FF2E1C", out targetColor);
+                break;
+            case 5:
+                //emotion = "Suspicious";
+                break;
+            default:
+                print("emotion for num not found");
+                break;
+        }
+        // Convert hex color code to Color
+        Color startColor = image.color;
+
+        float elapsedTime = 0f;
+        while (elapsedTime < transitionTime)
+        {
+            // Calculate the interpolation factor (t) between 0 and 1 based on elapsed time and duration
+            float t = Mathf.Clamp01(elapsedTime / transitionTime);
+
+            // Use Color.Lerp to interpolate between the startColor and targetColor
+            image.color = Color.Lerp(startColor, targetColor, t);
+
+            // Increment the elapsed time
+            elapsedTime += Time.deltaTime;
+
+            // Wait for the next frame
+            yield return null;
+        }
+        // Ensure the final color is exactly the target color
+        image.color = targetColor;
     }
 
     private string getEmotion(DialogueLine line)
