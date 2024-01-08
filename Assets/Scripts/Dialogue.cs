@@ -33,7 +33,7 @@ public class Dialogue : MonoBehaviour
     public Image charRight2;
     public Image emotionRight2;
 
-    public float transitionTime = 0.4f;
+    public float transitionTime = 0.2f;
 
     //Used to alter Buttons corresponding to DialogueLine containing options
     private List<Button> dialogueOptions = new List<Button>();
@@ -151,7 +151,6 @@ public class Dialogue : MonoBehaviour
 
     IEnumerator UpdateCharacterImage() {
         sprite = Resources.Load<Sprite>("Images/" + lines[index].name + "/" + lines[index].position + "/" + getEmotion(lines[index]));
-        print("Images/" + lines[index].name + "/" + lines[index].position + "/" + getEmotion(lines[index]));
         
         //It's a different character saying a line
         if (prevChar != lines[index].name)
@@ -164,26 +163,27 @@ public class Dialogue : MonoBehaviour
             if (lines[index].position == "L")
             {
                 StartCoroutine(ChangeColor(emotionLeft));
-                charLeft.GetComponent<Image>().sprite = sprite;
+                StartCoroutine(ChangeChar(charLeft));
+                //charLeft.GetComponent<Image>().sprite = sprite;
                 
             } else if (lines[index].position == "R")
             {
                 if (prevPosR == 1)
                 {
                     StartCoroutine(ChangeColor(emotionRight));
-                    charRight.GetComponent<Image>().sprite = sprite;
+                    StartCoroutine(ChangeChar(charLeft));
+                    //charRight.GetComponent<Image>().sprite = sprite;
                 }
                 else if (prevPosR == 2)
                 {
-                    StartCoroutine(ChangeColor(emotionLeft));
-                    charRight2.GetComponent<Image>().sprite = sprite;
+                    StartCoroutine(ChangeColor(emotionRight2));
+                    StartCoroutine(ChangeChar(charRight2));
+                    //charRight2.GetComponent<Image>().sprite = sprite;
                 }
             }
         }
         yield return null; // Add a short delay if needed.
     }
-
-    
 
     private void PlayExitAnimation()
     {
@@ -232,23 +232,17 @@ public class Dialogue : MonoBehaviour
     private void PlayEntryAnimation()
     {
         if (lines[index].position == "L")
-        {
-            charLeft.GetComponent<Image>().sprite = sprite;
+        {  
             characterEntry(imageLeft);
-            StartCoroutine(ChangeColor(emotionLeft));
         } else if (lines[index].position == "R")
         {
             if (prevPosR < 2)
-            {
-                charRight2.GetComponent<Image>().sprite = sprite;
+            { 
                 characterEntry(imageRight2);
-                StartCoroutine(ChangeColor(emotionRight2));
                 prevPosR = 2;
             } else if (prevPosR == 2)
             {
-                charRight.GetComponent<Image>().sprite = sprite;
                 characterEntry(imageRight);
-                StartCoroutine(ChangeColor(emotionRight));
                 prevPosR = 1;
             }   
         } else
@@ -260,15 +254,43 @@ public class Dialogue : MonoBehaviour
     //NEW - CHARACTERS ARE NO LONGER FADING IN OR OUT
     private void characterEntry(Image image)
     {
-        image.GetComponent<Image>().sprite = sprite;
+        //reset emotion on entry
+        Color targetColor;
+        ColorUtility.TryParseHtmlString("#FFFFFF", out targetColor);
+        Sprite def = Resources.Load<Sprite>("Images/" + lines[index].name + "/" + lines[index].position + "/Default");
+
         if (lines[index].position == "L")
         {
-            image.transform.LeanMoveLocal(new Vector2(-150, 50), 0.5f);
+            charLeft.GetComponent<Image>().sprite = def;
+            emotionLeft.color = targetColor;
+            image.transform.LeanMoveLocal(new Vector2(-150, 50), 0.5f).setOnComplete(() =>
+            {
+                StartCoroutine(ChangeColor(emotionLeft));
+                StartCoroutine(ChangeChar(charLeft));
+            });
         } else if (lines[index].position == "R") {
-            image.transform.LeanMoveLocal(new Vector2(150, 50), 0.5f);
+            if (prevPosR < 2)
+            {
+                charRight2.GetComponent<Image>().sprite = def;
+                emotionRight2.color = targetColor;
+                image.transform.LeanMoveLocal(new Vector2(150, 50), 0.5f).setOnComplete(() =>
+                {
+                    StartCoroutine(ChangeColor(emotionRight2));
+                    StartCoroutine(ChangeChar(charRight2));
+                });
+            } else if (prevPosR == 2)
+            {
+                charRight.GetComponent<Image>().sprite = def;
+                emotionRight.color = targetColor;
+                image.transform.LeanMoveLocal(new Vector2(150, 50), 0.5f).setOnComplete(() =>
+                {
+                    StartCoroutine(ChangeColor(emotionRight));
+                    StartCoroutine(ChangeChar(charRight));
+                });
+            }
         }
         image.transform.LeanScale(Vector2.one, 0.5f);
-        LeanTween.value(gameObject, 0, 1, 0.5f).setOnUpdate((float val) =>
+        LeanTween.value(gameObject, 0, 1, 1.5f).setOnUpdate((float val) =>
         {
             Color c = image.color;
             c.a = val;
@@ -301,6 +323,12 @@ public class Dialogue : MonoBehaviour
         StartDialogue();
     }
 
+    IEnumerator ChangeChar(Image image)
+    {
+        yield return new WaitForSeconds(0.1f);
+        image.GetComponent<Image>().sprite = sprite;
+        yield break;
+    }
     IEnumerator ChangeColor(Image image)
     {
         Color targetColor;
