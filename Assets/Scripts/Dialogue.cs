@@ -256,7 +256,7 @@ public class Dialogue : MonoBehaviour
     {
         //reset emotion on entry
         Color targetColor;
-        ColorUtility.TryParseHtmlString("#FFFFFF", out targetColor);
+        ColorUtility.TryParseHtmlString("#00727E", out targetColor);
         Sprite def = Resources.Load<Sprite>("Images/" + lines[index].name + "/" + lines[index].position + "/Default");
 
         if (lines[index].position == "L")
@@ -332,23 +332,23 @@ public class Dialogue : MonoBehaviour
     IEnumerator ChangeColor(Image image)
     {
         Color targetColor;
-        ColorUtility.TryParseHtmlString("#FFFFFF", out targetColor);
+        ColorUtility.TryParseHtmlString("#00727E", out targetColor);
         switch (lines[index].emotion)
         {
             case 0:
-                ColorUtility.TryParseHtmlString("#FFFFFF", out targetColor);
+                ColorUtility.TryParseHtmlString("#00727E", out targetColor);
                 break;
             case 1:
-                ColorUtility.TryParseHtmlString("#76FF6D", out targetColor);
+                ColorUtility.TryParseHtmlString("#4AFF4B", out targetColor);
                 break;
             case 2:
-                ColorUtility.TryParseHtmlString("#0E2349", out targetColor);
+                ColorUtility.TryParseHtmlString("#383838", out targetColor);
                 break;
             case 3:
-                ColorUtility.TryParseHtmlString("#FFFA4A", out targetColor);
+                ColorUtility.TryParseHtmlString("#FFE100", out targetColor);
                 break;
             case 4:
-                ColorUtility.TryParseHtmlString("#FF2E1C", out targetColor);
+                ColorUtility.TryParseHtmlString("#980300", out targetColor);
                 break;
             case 5:
                 //emotion = "Suspicious";
