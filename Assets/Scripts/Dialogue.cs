@@ -17,6 +17,7 @@ public class Dialogue : MonoBehaviour
     public GameObject DialogueBox;
     public TextMeshProUGUI textComponent;
     public GameObject backgroundImage;
+    public GameObject backgroundImage2;
     public float textSpeed;
     private Sprite sprite;
 
@@ -70,22 +71,21 @@ public class Dialogue : MonoBehaviour
         dialogueOption1.onClick.AddListener(OnDialogueOption1Click);
         dialogueOption2.onClick.AddListener(OnDialogueOption2Click);
         
-
         StartDialogue();
     }
 
-    // Update is called once per framez - //RELOCATE INDEX += 1;
     //if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended && validInput) - for mobile, !EventSystem.current.IsPointerOverGameObject() for pc
     void Update()
     {   
-        //print("index: " + index);
+        // If DialogueBox text has not yet loaded
         if (Input.GetMouseButtonDown(0) && textComponent.text != lines[index].content)
         {
             StopAllCoroutines();
             textComponent.text = lines[index].content;
         }
+        //text already loaded in dialoguebox
         else if (Input.GetMouseButtonDown(0) && index + 1 < lines.Count) {
-            //text already loaded in dialoguebox
+            
             textComponent.text = string.Empty;
             index += 1;
             //end of dialogue nodes
@@ -159,26 +159,21 @@ public class Dialogue : MonoBehaviour
             PlayExitAnimation();
         } else //when character is the same
         {
-            // TODO -> Will have to put blur for image transition
             if (lines[index].position == "L")
             {
                 StartCoroutine(ChangeColor(emotionLeft));
                 StartCoroutine(ChangeChar(charLeft));
-                //charLeft.GetComponent<Image>().sprite = sprite;
-                
             } else if (lines[index].position == "R")
             {
                 if (prevPosR == 1)
                 {
                     StartCoroutine(ChangeColor(emotionRight));
                     StartCoroutine(ChangeChar(charLeft));
-                    //charRight.GetComponent<Image>().sprite = sprite;
                 }
                 else if (prevPosR == 2)
                 {
                     StartCoroutine(ChangeColor(emotionRight2));
                     StartCoroutine(ChangeChar(charRight2));
-                    //charRight2.GetComponent<Image>().sprite = sprite;
                 }
             }
         }
@@ -251,7 +246,6 @@ public class Dialogue : MonoBehaviour
         }
     }
 
-    //NEW - CHARACTERS ARE NO LONGER FADING IN OR OUT
     private void characterEntry(Image image)
     {
         //reset emotion on entry
@@ -290,6 +284,7 @@ public class Dialogue : MonoBehaviour
             }
         }
         image.transform.LeanScale(Vector2.one, 0.5f);
+        //FADE ANIMATION - CURRENTLY NOT WORKING
         LeanTween.value(gameObject, 0, 1, 1.5f).setOnUpdate((float val) =>
         {
             Color c = image.color;
@@ -323,6 +318,7 @@ public class Dialogue : MonoBehaviour
         StartDialogue();
     }
 
+    //ADD BLUR TO TRANSITION
     IEnumerator ChangeChar(Image image)
     {
         yield return new WaitForSeconds(0.1f);
@@ -339,7 +335,7 @@ public class Dialogue : MonoBehaviour
                 ColorUtility.TryParseHtmlString("#00727E", out targetColor);
                 break;
             case 1:
-                ColorUtility.TryParseHtmlString("#4AFF4B", out targetColor);
+                ColorUtility.TryParseHtmlString("#00FFF3", out targetColor);
                 break;
             case 2:
                 ColorUtility.TryParseHtmlString("#383838", out targetColor);
