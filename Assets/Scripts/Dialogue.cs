@@ -16,6 +16,8 @@ public class Dialogue : MonoBehaviour
     //Used for altering DialogueBox state/text
     public GameObject DialogueBox;
     public TextMeshProUGUI textComponent;
+    public GameObject NarratorBox;
+    public TextMeshProUGUI narratorText;
     public GameObject backgroundImage;
     public GameObject backgroundImage2;
     public float textSpeed;
