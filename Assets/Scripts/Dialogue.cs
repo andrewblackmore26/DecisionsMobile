@@ -16,8 +16,6 @@ public class Dialogue : MonoBehaviour
     //Used for altering DialogueBox state/text
     public GameObject DialogueBox;
     public TextMeshProUGUI textComponent;
-    public GameObject NarratorBox;
-    public TextMeshProUGUI narratorText;
     public GameObject backgroundImage;
     public GameObject backgroundImage2;
     public float textSpeed;
@@ -259,7 +257,7 @@ public class Dialogue : MonoBehaviour
         {
             charLeft.GetComponent<Image>().sprite = def;
             emotionLeft.color = targetColor;
-            image.transform.LeanMoveLocal(new Vector2(-150, 50), 0.5f).setOnComplete(() =>
+            image.transform.LeanMoveLocal(new Vector2(-150, 75), 0.5f).setOnComplete(() =>
             {
                 StartCoroutine(ChangeColor(emotionLeft));
                 StartCoroutine(ChangeChar(charLeft));
@@ -269,7 +267,7 @@ public class Dialogue : MonoBehaviour
             {
                 charRight2.GetComponent<Image>().sprite = def;
                 emotionRight2.color = targetColor;
-                image.transform.LeanMoveLocal(new Vector2(150, 50), 0.5f).setOnComplete(() =>
+                image.transform.LeanMoveLocal(new Vector2(150, 75), 0.5f).setOnComplete(() =>
                 {
                     StartCoroutine(ChangeColor(emotionRight2));
                     StartCoroutine(ChangeChar(charRight2));
@@ -278,7 +276,7 @@ public class Dialogue : MonoBehaviour
             {
                 charRight.GetComponent<Image>().sprite = def;
                 emotionRight.color = targetColor;
-                image.transform.LeanMoveLocal(new Vector2(150, 50), 0.5f).setOnComplete(() =>
+                image.transform.LeanMoveLocal(new Vector2(150, 75), 0.5f).setOnComplete(() =>
                 {
                     StartCoroutine(ChangeColor(emotionRight));
                     StartCoroutine(ChangeChar(charRight));
