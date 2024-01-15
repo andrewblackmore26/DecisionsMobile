@@ -73,9 +73,6 @@ public class Dialogue : MonoBehaviour
         dialogueOption1.onClick.AddListener(OnDialogueOption1Click);
         dialogueOption2.onClick.AddListener(OnDialogueOption2Click);
 
-        //TEST
-        DialogueBox.SetActive(false);
-
         StartDialogue();
     }
 
