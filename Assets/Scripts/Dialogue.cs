@@ -16,10 +16,12 @@ public class Dialogue : MonoBehaviour
     //Used for altering DialogueBox state/text
     public GameObject DialogueBox;
     public TextMeshProUGUI textComponent;
-    public GameObject backgroundImage;
-    public GameObject backgroundImage2;
     public float textSpeed;
     private Sprite sprite;
+
+    //Used to control background image transitions, slow pans
+    public GameObject backgroundImage;
+    public GameObject backgroundImage2;
 
     //Used for handling image transitions/transparency/movement
     public Image imageLeft;
@@ -70,7 +72,10 @@ public class Dialogue : MonoBehaviour
         dialogueOption0.onClick.AddListener(OnDialogueOption0Click);
         dialogueOption1.onClick.AddListener(OnDialogueOption1Click);
         dialogueOption2.onClick.AddListener(OnDialogueOption2Click);
-        
+
+        //TEST
+        DialogueBox.SetActive(false);
+
         StartDialogue();
     }
 
@@ -83,18 +88,19 @@ public class Dialogue : MonoBehaviour
             StopAllCoroutines();
             textComponent.text = lines[index].content;
         }
-        //text already loaded in dialoguebox
+        //text already loaded in dialoguebox -> go to next dialogueLine
         else if (Input.GetMouseButtonDown(0) && index + 1 < lines.Count) {
             
             textComponent.text = string.Empty;
             index += 1;
             //end of dialogue nodes
             if (index == lines.Count) {
-                DialogueBox.SetActive(false);
+                DialogueBox.SetActive(false); // might be unused
             } else {
                 StartDialogue();
             }   
         }
+        //for option clicks (i think)
         else if (Input.GetMouseButtonDown(0) && index < lines.Count && lines[index].next != "")
         {
             string key = lines[index].next;
