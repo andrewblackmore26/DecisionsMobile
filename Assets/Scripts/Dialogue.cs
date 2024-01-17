@@ -14,10 +14,13 @@ public class Dialogue : MonoBehaviour
     public List<DialogueLine> lines;
 
     //Used for altering DialogueBox state/text
-    public GameObject DialogueBox;
+    public GameObject dialogueBox;
     public TextMeshProUGUI textComponent;
+    
+    public GameObject dialogueBox2;
+    public TextMeshProUGUI textComponent2;
+
     public float textSpeed;
-    private Sprite sprite;
 
     //Used to control background image transitions, slow pans
     public GameObject backgroundImage;
@@ -36,6 +39,7 @@ public class Dialogue : MonoBehaviour
     public Image charRight2;
     public Image emotionRight2;
 
+    private Sprite sprite;
     public float transitionTime = 0.2f;
 
     //Used to alter Buttons corresponding to DialogueLine containing options
@@ -78,7 +82,7 @@ public class Dialogue : MonoBehaviour
 
     //if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended && validInput) - for mobile, !EventSystem.current.IsPointerOverGameObject() for pc
     void Update()
-    {   
+    {
         // If DialogueBox text has not yet loaded
         if (Input.GetMouseButtonDown(0) && textComponent.text != lines[index].content)
         {
@@ -86,16 +90,20 @@ public class Dialogue : MonoBehaviour
             textComponent.text = lines[index].content;
         }
         //text already loaded in dialoguebox -> go to next dialogueLine
-        else if (Input.GetMouseButtonDown(0) && index + 1 < lines.Count) {
-            
+        else if (Input.GetMouseButtonDown(0) && index + 1 < lines.Count)
+        {
+
             textComponent.text = string.Empty;
             index += 1;
             //end of dialogue nodes
-            if (index == lines.Count) {
-                DialogueBox.SetActive(false); // might be unused
-            } else {
+            if (index == lines.Count)
+            {
+                dialogueBox.SetActive(false); // might be unused
+            }
+            else
+            {
                 StartDialogue();
-            }   
+            }
         }
         //for option clicks (i think)
         else if (Input.GetMouseButtonDown(0) && index < lines.Count && lines[index].next != "")
@@ -109,27 +117,35 @@ public class Dialogue : MonoBehaviour
     }
 
     //runs once every DialogueLine
-    void StartDialogue() {
-        StartCoroutine(TypeLine());
+    void StartDialogue()
+    {
+        StartCoroutine(TypeLine()); // TO BE PLACED ELSEWHERE
         StartCoroutine(UpdateCharacterImage());
+        StartCoroutine(UpdateDialogueBox());
         // display choices, if any, for this dialogue line
-        if (lines[index].options.Count > 0) {
+        if (lines[index].options.Count > 0)
+        {
             DisplayChoices();
-        } else {
-            dialogueOption0.gameObject.SetActive(false); 
-            dialogueOption1.gameObject.SetActive(false); 
+        }
+        else
+        {
+            dialogueOption0.gameObject.SetActive(false);
+            dialogueOption1.gameObject.SetActive(false);
             dialogueOption2.gameObject.SetActive(false);
-        }   
+        }
     }
 
     //precondition: Must have choices available
-    private void DisplayChoices() {
+    private void DisplayChoices()
+    {
         List<Option> options = lines[index].options;
         TextMeshProUGUI txt;
         //defensive check to make sure our UI can support number of choices coming in
-        if (options.Count > 3) {
+        if (options.Count > 3)
+        {
             Debug.LogError("More choices were given than can be supported: " + options.Count);
-            foreach (Option option in options) {
+            foreach (Option option in options)
+            {
                 Debug.LogError(option.content);
             }
         }
@@ -152,21 +168,24 @@ public class Dialogue : MonoBehaviour
         }
     }
 
-    IEnumerator UpdateCharacterImage() {
+    IEnumerator UpdateCharacterImage()
+    {
         sprite = Resources.Load<Sprite>("Images/" + lines[index].name + "/" + lines[index].position + "/" + getEmotion(lines[index]));
-        
+
         //It's a different character saying a line
         if (prevChar != lines[index].name)
         {
             prevChar = lines[index].name;
             PlayExitAnimation();
-        } else //when character is the same
+        }
+        else //when character is the same
         {
             if (lines[index].position == "L")
             {
                 StartCoroutine(ChangeColor(emotionLeft));
                 StartCoroutine(ChangeChar(charLeft));
-            } else if (lines[index].position == "R")
+            }
+            else if (lines[index].position == "R")
             {
                 if (prevPosR == 1)
                 {
@@ -188,13 +207,15 @@ public class Dialogue : MonoBehaviour
         if (prevPos == "L") //previous character on Left - Useful function: setOnComplete(() => function());
         {
             characterExit(imageLeft);
-        } else if (prevPos == "R") //previous character on Right
+        }
+        else if (prevPos == "R") //previous character on Right
         {
             if (prevPosR == 1)
             {
                 characterExit(imageRight);
-                
-            } else if (prevPosR == 2)
+
+            }
+            else if (prevPosR == 2)
             {
                 characterExit(imageRight2);
             }
@@ -208,7 +229,9 @@ public class Dialogue : MonoBehaviour
         if (prevPos == "L")
         {
             image.transform.LeanMoveLocal(new Vector2(-964, -292), 0.5f);
-        } else if (prevPos == "R") { 
+        }
+        else if (prevPos == "R")
+        {
             image.transform.LeanMoveLocal(new Vector2(971, -292), 0.5f);
         }
         image.transform.LeanScale(Vector2.zero, 0.5f);
@@ -221,7 +244,8 @@ public class Dialogue : MonoBehaviour
         if (lines[index].position == "R") // Move backgroundImage towards new speaker
         {
             backgroundImage.transform.LeanMoveLocal(new Vector2(1.5f, 0), 0.3f);
-        } else if (lines[index].position == "L")
+        }
+        else if (lines[index].position == "L")
         {
             backgroundImage.transform.LeanMoveLocal(new Vector2(2.5f, 0), 0.3f);
         }
@@ -230,20 +254,23 @@ public class Dialogue : MonoBehaviour
     private void PlayEntryAnimation()
     {
         if (lines[index].position == "L")
-        {  
+        {
             characterEntry(imageLeft);
-        } else if (lines[index].position == "R")
+        }
+        else if (lines[index].position == "R")
         {
             if (prevPosR < 2)
-            { 
+            {
                 characterEntry(imageRight2);
                 prevPosR = 2;
-            } else if (prevPosR == 2)
+            }
+            else if (prevPosR == 2)
             {
                 characterEntry(imageRight);
                 prevPosR = 1;
-            }   
-        } else
+            }
+        }
+        else
         {
             Debug.Log("No position for image given: error!");
         }
@@ -265,7 +292,9 @@ public class Dialogue : MonoBehaviour
                 StartCoroutine(ChangeColor(emotionLeft));
                 StartCoroutine(ChangeChar(charLeft));
             });
-        } else if (lines[index].position == "R") {
+        }
+        else if (lines[index].position == "R")
+        {
             if (prevPosR < 2)
             {
                 charRight2.GetComponent<Image>().sprite = def;
@@ -275,7 +304,8 @@ public class Dialogue : MonoBehaviour
                     StartCoroutine(ChangeColor(emotionRight2));
                     StartCoroutine(ChangeChar(charRight2));
                 });
-            } else if (prevPosR == 2)
+            }
+            else if (prevPosR == 2)
             {
                 charRight.GetComponent<Image>().sprite = def;
                 emotionRight.color = targetColor;
@@ -378,16 +408,6 @@ public class Dialogue : MonoBehaviour
         image.color = targetColor;
     }
 
-    IEnumerator TypeLine()
-    {
-        // Type each character 1 by 1
-        foreach (char c in lines[index].content)
-        {
-            textComponent.text += c;
-            yield return new WaitForSeconds(textSpeed);
-        }
-    }
-
     private string getEmotion(DialogueLine line)
     {
         string emotion = null;
@@ -416,5 +436,75 @@ public class Dialogue : MonoBehaviour
                 break;
         }
         return emotion;
+    }
+
+    IEnumerator TypeLine()
+    {
+        // Type each character 1 by 1
+        foreach (char c in lines[index].content)
+        {
+            textComponent.text += c;
+            yield return new WaitForSeconds(textSpeed);
+        }
+    }
+
+    IEnumerator UpdateDialogueBox()
+    {
+        //ExtendBottomOfImage();
+        RectTransform rectTransform = dialogueBox.GetComponent<RectTransform>();
+        Vector3 currentPosition = rectTransform.localPosition;
+        if (lines[index].position == "L")
+        {            
+            dialogueBox.transform.LeanMoveLocal(new Vector2(-70, currentPosition.y), 0.0f);
+            ExtendBottomOfImage(dialogueBox);
+        } else if (lines[index].position == "R")
+        {
+            dialogueBox.transform.LeanMoveLocal(new Vector2(70, currentPosition.y), 0.0f);
+        }
+        yield return null;
+    }
+
+    void ExtendBottomOfImage()
+    {
+        // Get the RectTransform of the Image
+        float extensionAmount = 20.0f;
+        RectTransform rectTransform = dialogueBox.GetComponent<RectTransform>();
+
+        // Get the current size and position
+        Vector2 currentSize = rectTransform.sizeDelta;
+        Vector3 currentPosition = rectTransform.localPosition;
+
+        // Extend the bottom by modifying the size
+        rectTransform.sizeDelta = new Vector2(currentSize.x, currentSize.y + extensionAmount);
+
+        // Move the object upward to keep the top border in place
+        rectTransform.localPosition = new Vector3(currentPosition.x, currentPosition.y - (extensionAmount / 2.0f), currentPosition.z);
+    }
+
+    void ExtendBottomOfImage(GameObject image)
+    {
+        // Get the RectTransform of the Image
+        RectTransform rectTransform = image.GetComponent<RectTransform>();
+        float extensionAmount = 70.0f;
+
+        // Get the current size and position
+        Vector2 currentSize = rectTransform.sizeDelta;
+        Vector3 currentPosition = rectTransform.localPosition;
+
+        // Extend the bottom by animating the size change with ease-out
+        LeanTween.value(gameObject, currentSize.y, currentSize.y + extensionAmount, 0.5f)
+            .setOnUpdate((float value) =>
+            {
+                rectTransform.sizeDelta = new Vector2(currentSize.x, value);
+            })
+            .setEase(LeanTweenType.easeOutBack); // You can change the ease type
+
+        // Move the object upward to keep the top border in place with ease-out
+        LeanTween.value(gameObject, currentPosition.y, currentPosition.y - (extensionAmount / 2.0f), 0.5f)
+            .setOnUpdate((float value) =>
+            {
+                rectTransform.localPosition = new Vector3(currentPosition.x, value, currentPosition.z);
+            })
+            .setEase(LeanTweenType.easeOutBack); // You can change the ease type
     }
 }
