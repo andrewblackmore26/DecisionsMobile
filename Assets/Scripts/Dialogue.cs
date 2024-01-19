@@ -52,6 +52,7 @@ public class Dialogue : MonoBehaviour
     private int index = 0;
     private string prevChar = "";
     private string prevPos = "";
+    private int prevBox = 0;
     private int prevPosR = 0;
 
     void Start()
@@ -119,9 +120,10 @@ public class Dialogue : MonoBehaviour
     //runs once every DialogueLine
     void StartDialogue()
     {
-        StartCoroutine(TypeLine()); // TO BE PLACED ELSEWHERE
+        
         StartCoroutine(UpdateCharacterImage());
         StartCoroutine(UpdateDialogueBox());
+        StartCoroutine(TypeLine()); // TO BE PLACED ELSEWHERE
         // display choices, if any, for this dialogue line
         if (lines[index].options.Count > 0)
         {
@@ -441,6 +443,7 @@ public class Dialogue : MonoBehaviour
     IEnumerator TypeLine()
     {
         // Type each character 1 by 1
+        print(lines[index].content.Length);
         foreach (char c in lines[index].content)
         {
             textComponent.text += c;
@@ -450,49 +453,64 @@ public class Dialogue : MonoBehaviour
 
     IEnumerator UpdateDialogueBox()
     {
-        //ExtendBottomOfImage();
         RectTransform rectTransform = dialogueBox.GetComponent<RectTransform>();
         Vector3 currentPosition = rectTransform.localPosition;
         if (lines[index].position == "L")
-        {            
+        {
             dialogueBox.transform.LeanMoveLocal(new Vector2(-70, currentPosition.y), 0.0f);
-            ExtendBottomOfImage(dialogueBox);
+            UpdateBottomOfDialogueBox(dialogueBox);
         } else if (lines[index].position == "R")
         {
             dialogueBox.transform.LeanMoveLocal(new Vector2(70, currentPosition.y), 0.0f);
+            UpdateBottomOfDialogueBox(dialogueBox);
+        } else if (lines[index].position == "N")
+        {
+            //FOR NARRATOR
         }
         yield return null;
     }
 
-    void ExtendBottomOfImage()
+    void UpdateBottomOfDialogueBox(GameObject image)
     {
-        // Get the RectTransform of the Image
-        float extensionAmount = 20.0f;
-        RectTransform rectTransform = dialogueBox.GetComponent<RectTransform>();
-
-        // Get the current size and position
-        Vector2 currentSize = rectTransform.sizeDelta;
-        Vector3 currentPosition = rectTransform.localPosition;
-
-        // Extend the bottom by modifying the size
-        rectTransform.sizeDelta = new Vector2(currentSize.x, currentSize.y + extensionAmount);
-
-        // Move the object upward to keep the top border in place
-        rectTransform.localPosition = new Vector3(currentPosition.x, currentPosition.y - (extensionAmount / 2.0f), currentPosition.z);
-    }
-
-    void ExtendBottomOfImage(GameObject image)
-    {
-        // Get the RectTransform of the Image
-        RectTransform rectTransform = image.GetComponent<RectTransform>();
+        // GET DESIRED HEIGHT
         float extensionAmount = 70.0f;
+        if (lines[index].content.Length < 30)
+        {
+            extensionAmount = 150.0f;
+        }
+        else if (lines[index].content.Length < 60)
+        {
+            extensionAmount = 225.0f;
+        }
+        else if (lines[index].content.Length < 90)
+        {
+            extensionAmount = 300.0f;
+        }
+        else
+        {
+            extensionAmount = 375.0f;
+        }
 
-        // Get the current size and position
+        /*if (prevChar == lines[index].name)
+        {
+            AdjustBoxForSameSpeaker(image, extensionAmount);
+        }
+        else
+        {
+            AdjustBoxForDifferentSpeaker(GameObject image);
+        }*/
+
+        // Reset height to minimode
+        RectTransform rectTransform = image.GetComponent<RectTransform>();
         Vector2 currentSize = rectTransform.sizeDelta;
         Vector3 currentPosition = rectTransform.localPosition;
+        rectTransform.sizeDelta = new Vector2(currentSize.x, 100);
+        rectTransform.localPosition = new Vector3(currentPosition.x, 120, currentPosition.z);
+        currentSize = rectTransform.sizeDelta;
+        currentPosition = rectTransform.localPosition;
 
         // Extend the bottom by animating the size change with ease-out
-        LeanTween.value(gameObject, currentSize.y, currentSize.y + extensionAmount, 0.5f)
+        LeanTween.value(gameObject, currentSize.y, currentSize.y + extensionAmount, 0.3f)
             .setOnUpdate((float value) =>
             {
                 rectTransform.sizeDelta = new Vector2(currentSize.x, value);
@@ -500,11 +518,31 @@ public class Dialogue : MonoBehaviour
             .setEase(LeanTweenType.easeOutBack); // You can change the ease type
 
         // Move the object upward to keep the top border in place with ease-out
-        LeanTween.value(gameObject, currentPosition.y, currentPosition.y - (extensionAmount / 2.0f), 0.5f)
+        LeanTween.value(gameObject, currentPosition.y, currentPosition.y - (extensionAmount / 2.0f), 0.3f)
             .setOnUpdate((float value) =>
             {
                 rectTransform.localPosition = new Vector3(currentPosition.x, value, currentPosition.z);
             })
             .setEase(LeanTweenType.easeOutBack); // You can change the ease type
+    }
+
+    private void AdjustBoxForSameSpeaker(GameObject image, float extensionAmount)
+    {
+        RectTransform rectTransform = image.GetComponent<RectTransform>();
+        Vector2 currentSize = rectTransform.sizeDelta;
+        Vector3 currentPosition = rectTransform.localPosition;
+        // Extend the bottom by animating the size change with ease-out
+        LeanTween.value(gameObject, currentSize.y, 100 + extensionAmount, 0.3f)
+            .setOnUpdate((float value) =>
+            {
+                rectTransform.sizeDelta = new Vector2(currentSize.x, value);
+            }); // You can change the ease type
+
+        // Move the object upward to keep the top border in place with ease-out
+        LeanTween.value(gameObject, currentPosition.y, 120 - (extensionAmount / 2.0f), 0.3f)
+            .setOnUpdate((float value) =>
+            {
+                rectTransform.localPosition = new Vector3(currentPosition.x, value, currentPosition.z);
+            }); // You can change the ease type
     }
 }
