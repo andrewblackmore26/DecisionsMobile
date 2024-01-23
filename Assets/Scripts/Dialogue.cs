@@ -9,6 +9,9 @@ using UnityEngine.EventSystems;
 
 public class Dialogue : MonoBehaviour
 {
+    //UI Areas for handling clicks
+    public GameObject DialogueArea;
+
     //Used for loading DialogueLines
     public DialogueParser parser;
     public List<DialogueLine> lines;
@@ -49,10 +52,11 @@ public class Dialogue : MonoBehaviour
     public Button dialogueOption2;
 
     //Used for logic controlling game
+    private Utils Utils;
     private int index = 0;
     private string prevChar = "";
     private string prevPos = "";
-    private int prevBox = 0;
+    //private int prevBox = 0;
     private int prevPosR = 0;
 
     void Start()
@@ -63,6 +67,7 @@ public class Dialogue : MonoBehaviour
         parser = GameObject.Find("DialogueParser").GetComponent<DialogueParser>();
         lines = parser.GetLines("Start");
         parser.GetComponent<DialogueParser>().enabled = false;
+        Utils = new Utils();
 
         //setting up images
         imageLeft.transform.localScale = Vector2.zero;
@@ -84,6 +89,10 @@ public class Dialogue : MonoBehaviour
     //if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended && validInput) - for mobile, !EventSystem.current.IsPointerOverGameObject() for pc
     void Update()
     {
+        if (Utils.IsMouseOverUI(DialogueArea))
+        {
+            Debug.Log("WE OVER SOMETHIN!");
+        }
         // If DialogueBox text has not yet loaded
         if (Input.GetMouseButtonDown(0) && textComponent.text != lines[index].content)
         {
@@ -93,7 +102,6 @@ public class Dialogue : MonoBehaviour
         //text already loaded in dialoguebox -> go to next dialogueLine
         else if (Input.GetMouseButtonDown(0) && index + 1 < lines.Count)
         {
-
             textComponent.text = string.Empty;
             index += 1;
             //end of dialogue nodes
@@ -122,7 +130,7 @@ public class Dialogue : MonoBehaviour
     {
         
         StartCoroutine(UpdateCharacterImage());
-        StartCoroutine(UpdateDialogueBox());
+        UpdateDialogueBox();
         StartCoroutine(TypeLine()); // TO BE PLACED ELSEWHERE
         // display choices, if any, for this dialogue line
         if (lines[index].options.Count > 0)
@@ -135,49 +143,17 @@ public class Dialogue : MonoBehaviour
             dialogueOption1.gameObject.SetActive(false);
             dialogueOption2.gameObject.SetActive(false);
         }
+        prevChar = lines[index].name;
     }
 
-    //precondition: Must have choices available
-    private void DisplayChoices()
-    {
-        List<Option> options = lines[index].options;
-        TextMeshProUGUI txt;
-        //defensive check to make sure our UI can support number of choices coming in
-        if (options.Count > 3)
-        {
-            Debug.LogError("More choices were given than can be supported: " + options.Count);
-            foreach (Option option in options)
-            {
-                Debug.LogError(option.content);
-            }
-        }
-
-        int count = 0;
-        // enable and initalize the choices up to the amount of choices for this line of dialogue
-        for (int i = 0; i < options.Count; i++)
-        {
-            txt = dialogueOptions[i].GetComponentInChildren<TextMeshProUGUI>();
-            txt.text = lines[index].options[i].content;
-            dialogueOptions[i].gameObject.SetActive(true);
-            count++;
-        }
-
-        // go through the remaining choices the UI supports and make sure they're hidden
-        while (count < 3)
-        {
-            dialogueOptions[count].gameObject.SetActive(false);
-            count++;
-        }
-    }
-
+    
     IEnumerator UpdateCharacterImage()
     {
-        sprite = Resources.Load<Sprite>("Images/" + lines[index].name + "/" + lines[index].position + "/" + getEmotion(lines[index]));
+        sprite = Resources.Load<Sprite>("Images/" + lines[index].name + "/" + lines[index].position + "/" + Utils.getEmotion(lines[index]));
 
         //It's a different character saying a line
         if (prevChar != lines[index].name)
         {
-            prevChar = lines[index].name;
             PlayExitAnimation();
         }
         else //when character is the same
@@ -280,7 +256,7 @@ public class Dialogue : MonoBehaviour
 
     private void characterEntry(Image image)
     {
-        //reset emotion on entry
+        // reset emotion on entry
         Color targetColor;
         ColorUtility.TryParseHtmlString("#00727E", out targetColor);
         Sprite def = Resources.Load<Sprite>("Images/" + lines[index].name + "/" + lines[index].position + "/Default");
@@ -328,31 +304,6 @@ public class Dialogue : MonoBehaviour
         });
     }
 
-    private void OnDialogueOption0Click()
-    {
-        handleDialogueOptionClick(0);
-    }
-
-    private void OnDialogueOption1Click()
-    {
-        handleDialogueOptionClick(1);
-    }
-
-    private void OnDialogueOption2Click()
-    {
-        handleDialogueOptionClick(2);
-    }
-
-    private void handleDialogueOptionClick(int num)
-    {
-        string key = lines[index].options[num].next;
-        index = 0;
-        Debug.Log("Button " + num + " clicked!");
-        lines = parser.GetLines(key);
-        textComponent.text = string.Empty;
-        StartDialogue();
-    }
-
     //ADD BLUR TO TRANSITION
     IEnumerator ChangeChar(Image image)
     {
@@ -360,34 +311,10 @@ public class Dialogue : MonoBehaviour
         image.GetComponent<Image>().sprite = sprite;
         yield break;
     }
+
     IEnumerator ChangeColor(Image image)
     {
-        Color targetColor;
-        ColorUtility.TryParseHtmlString("#00727E", out targetColor);
-        switch (lines[index].emotion)
-        {
-            case 0:
-                ColorUtility.TryParseHtmlString("#00727E", out targetColor);
-                break;
-            case 1:
-                ColorUtility.TryParseHtmlString("#00FFF3", out targetColor);
-                break;
-            case 2:
-                ColorUtility.TryParseHtmlString("#383838", out targetColor);
-                break;
-            case 3:
-                ColorUtility.TryParseHtmlString("#FFE100", out targetColor);
-                break;
-            case 4:
-                ColorUtility.TryParseHtmlString("#980300", out targetColor);
-                break;
-            case 5:
-                //emotion = "Suspicious";
-                break;
-            default:
-                print("emotion for num not found");
-                break;
-        }
+        Color targetColor = Utils.getDialogueColour(lines[index]);
         // Convert hex color code to Color
         Color startColor = image.color;
 
@@ -410,40 +337,13 @@ public class Dialogue : MonoBehaviour
         image.color = targetColor;
     }
 
-    private string getEmotion(DialogueLine line)
-    {
-        string emotion = null;
-        switch (line.getEmotion())
-        {
-            case 0:
-                emotion = "Default";
-                break;
-            case 1:
-                emotion = "Happy";
-                break;
-            case 2:
-                emotion = "Sad";
-                break;
-            case 3:
-                emotion = "Surprised";
-                break;
-            case 4:
-                emotion = "Angry";
-                break;
-            case 5:
-                emotion = "Suspicious";
-                break;
-            default:
-                print("emotion for num not found");
-                break;
-        }
-        return emotion;
-    }
+    //----------------------------------------------------------------------------------------------------------------------------------------------
+    //-------------                                        HANDLES DIALOGUE BOX DISPLAY/CONTENT                                         ------------
+    //----------------------------------------------------------------------------------------------------------------------------------------------
 
     IEnumerator TypeLine()
     {
         // Type each character 1 by 1
-        print(lines[index].content.Length);
         foreach (char c in lines[index].content)
         {
             textComponent.text += c;
@@ -451,7 +351,7 @@ public class Dialogue : MonoBehaviour
         }
     }
 
-    IEnumerator UpdateDialogueBox()
+    private void UpdateDialogueBox()
     {
         RectTransform rectTransform = dialogueBox.GetComponent<RectTransform>();
         Vector3 currentPosition = rectTransform.localPosition;
@@ -467,38 +367,15 @@ public class Dialogue : MonoBehaviour
         {
             //FOR NARRATOR
         }
-        yield return null;
+        print(prevChar + " " + lines[index].position);
     }
 
     void UpdateBottomOfDialogueBox(GameObject image)
     {
         // GET DESIRED HEIGHT
-        float extensionAmount = 70.0f;
-        if (lines[index].content.Length < 30)
-        {
-            extensionAmount = 150.0f;
-        }
-        else if (lines[index].content.Length < 60)
-        {
-            extensionAmount = 225.0f;
-        }
-        else if (lines[index].content.Length < 90)
-        {
-            extensionAmount = 300.0f;
-        }
-        else
-        {
-            extensionAmount = 375.0f;
-        }
+        float extensionAmount = Utils.getDialogueHeight(lines[index]);
 
-        /*if (prevChar == lines[index].name)
-        {
-            AdjustBoxForSameSpeaker(image, extensionAmount);
-        }
-        else
-        {
-            AdjustBoxForDifferentSpeaker(GameObject image);
-        }*/
+        //if (prevChar == lines[index].name)
 
         // Reset height to minimode
         RectTransform rectTransform = image.GetComponent<RectTransform>();
@@ -539,10 +416,71 @@ public class Dialogue : MonoBehaviour
             }); // You can change the ease type
 
         // Move the object upward to keep the top border in place with ease-out
-        LeanTween.value(gameObject, currentPosition.y, 120 - (extensionAmount / 2.0f), 0.3f)
+        LeanTween.value(gameObject, currentPosition.y, currentPosition.y - (currentPosition.y - (100 + extensionAmount) / 2.0f), 0.3f)
             .setOnUpdate((float value) =>
             {
                 rectTransform.localPosition = new Vector3(currentPosition.x, value, currentPosition.z);
             }); // You can change the ease type
+    }
+
+    //----------------------------------------------------------------------------------------------------------------------------------------------
+    //-------------                                             HANDLES CHOICE DISPLAY                                                  ------------
+    //----------------------------------------------------------------------------------------------------------------------------------------------
+    //precondition: Must have choices available
+    private void DisplayChoices()
+    {
+        List<Option> options = lines[index].options;
+        TextMeshProUGUI txt;
+        //defensive check to make sure our UI can support number of choices coming in
+        if (options.Count > 3)
+        {
+            Debug.LogError("More choices were given than can be supported: " + options.Count);
+            foreach (Option option in options)
+            {
+                Debug.LogError(option.content);
+            }
+        }
+
+        int count = 0;
+        // enable and initalize the choices up to the amount of choices for this line of dialogue
+        for (int i = 0; i < options.Count; i++)
+        {
+            txt = dialogueOptions[i].GetComponentInChildren<TextMeshProUGUI>();
+            txt.text = lines[index].options[i].content;
+            dialogueOptions[i].gameObject.SetActive(true);
+            count++;
+        }
+
+        // go through the remaining choices the UI supports and make sure they're hidden
+        while (count < 3)
+        {
+            dialogueOptions[count].gameObject.SetActive(false);
+            count++;
+        }
+    }
+
+    private void OnDialogueOption0Click()
+    {
+        handleDialogueOptionClick(0);
+    }
+
+    private void OnDialogueOption1Click()
+    {
+        handleDialogueOptionClick(1);
+    }
+
+    private void OnDialogueOption2Click()
+    {
+        handleDialogueOptionClick(2);
+    }
+
+    private void handleDialogueOptionClick(int num)
+    {
+        string key = lines[index].options[num].next;
+        index = 0;
+        Debug.Log("Button " + num + " clicked!");
+        lines = parser.GetLines(key);
+        textComponent.text = string.Empty;
+        StartDialogue();
     }
 }
