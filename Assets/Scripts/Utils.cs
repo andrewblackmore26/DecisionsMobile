@@ -9,27 +9,36 @@ using UnityEngine.EventSystems;
 public class Utils
 {
 
-    public bool IsMouseOverUI(GameObject area)
+    //--------------------------------------------------------------------------------------------------
+    //This set of functions are used to find if pointer is over UI Element
+    public bool IsPointerOverUIElement(int UILayer)
     {
-        
-        // Check if the UI element is your specified UI area
-        // You can use yourUIArea's Collider, RectTransform, or any other property
-        // Example: Collider collider = yourUIArea.GetComponent<Collider>();
-        // Replace "Collider" with the appropriate component type
+        return IsPointerOverUIElement(GetEventSystemRaycastResults(), UILayer);
+    }
 
-        // Example using BoxCollider
-        Collider collider = area.GetComponent<BoxCollider>();
-
-        if (collider != null)
+    //Returns 'true' if we touched or hovering on Unity UI element.
+    private bool IsPointerOverUIElement(List<RaycastResult> eventSystemRaysastResults, int UILayer)
+    {
+        for (int index = 0; index < eventSystemRaysastResults.Count; index++)
         {
-
-            // Check if the mouse position is within the bounds of the collider
-            return collider.bounds.Contains(Input.mousePosition);
+            RaycastResult curRaysastResult = eventSystemRaysastResults[index];
+            if (curRaysastResult.gameObject.layer == UILayer)
+                return true;
         }
-
-
         return false;
     }
+
+    // Gets all event system raycast results for the current mouse or touch position
+    public static List<RaycastResult> GetEventSystemRaycastResults()
+    {
+        PointerEventData eventData = new PointerEventData(EventSystem.current);
+        eventData.position = Input.mousePosition;
+        List<RaycastResult> raycastResults = new List<RaycastResult>();
+        // Perform a raycast using the EventSystem
+        EventSystem.current.RaycastAll(eventData, raycastResults);
+        return raycastResults;
+    }
+    //-------------------------------------------------------------------------------------------------
 
     // Get new colour of DialogueLine emotion
     public Color getDialogueColour(DialogueLine line)
