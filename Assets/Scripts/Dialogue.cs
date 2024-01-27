@@ -93,35 +93,46 @@ public class Dialogue : MonoBehaviour
     {
         print(Utils.IsPointerOverUIElement(UILayer) ? "Over UI" : "Not over UI");
         // If DialogueBox text has not yet loaded
-        if (Input.GetMouseButtonDown(0) && textComponent.text != lines[index].content)
+        if (Input.GetKeyDown(KeyCode.D))
         {
-            StopAllCoroutines();
-            textComponent.text = lines[index].content;
+            DialogueArea.GetComponent<Image>().raycastTarget = false;
         }
-        //text already loaded in dialoguebox -> go to next dialogueLine
-        else if (Input.GetMouseButtonDown(0) && index + 1 < lines.Count)
+        if (Input.GetKeyDown(KeyCode.E))
         {
-            textComponent.text = string.Empty;
-            index += 1;
-            //end of dialogue nodes
-            if (index == lines.Count)
+            DialogueArea.GetComponent<Image>().raycastTarget = true;
+        }
+        if (Utils.IsPointerOverUIElement(UILayer))
+        {
+            if (Input.GetMouseButtonDown(0) && textComponent.text != lines[index].content)
             {
-                dialogueBox.SetActive(false); // might be unused
+                StopAllCoroutines();
+                textComponent.text = lines[index].content;
             }
-            else
+            //text already loaded in dialoguebox -> go to next dialogueLine
+            else if (Input.GetMouseButtonDown(0) && index + 1 < lines.Count)
             {
+                textComponent.text = string.Empty;
+                index += 1;
+                //end of dialogue nodes
+                if (index == lines.Count)
+                {
+                    dialogueBox.SetActive(false); // might be unused
+                }
+                else
+                {
+                    StartDialogue();
+                }
+            }
+            //for option clicks (i think)
+            else if (Input.GetMouseButtonDown(0) && index < lines.Count && lines[index].next != "")
+            {
+                string key = lines[index].next;
+                index = 0;
+                lines = parser.GetLines(key);
+                textComponent.text = string.Empty;
                 StartDialogue();
             }
-        }
-        //for option clicks (i think)
-        else if (Input.GetMouseButtonDown(0) && index < lines.Count && lines[index].next != "")
-        {
-            string key = lines[index].next;
-            index = 0;
-            lines = parser.GetLines(key);
-            textComponent.text = string.Empty;
-            StartDialogue();
-        }
+        } 
     }
 
     //runs once every DialogueLine
@@ -477,7 +488,7 @@ public class Dialogue : MonoBehaviour
     {
         string key = lines[index].options[num].next;
         index = 0;
-        Debug.Log("Button " + num + " clicked!");
+        //Debug.Log("Button " + num + " clicked!");
         lines = parser.GetLines(key);
         textComponent.text = string.Empty;
         StartDialogue();
