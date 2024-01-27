@@ -53,7 +53,6 @@ public class Dialogue : MonoBehaviour
 
     //Used for logic controlling game
     private Utils Utils;
-    private int UILayer;
     private int index = 0;
     private string prevChar = "";
     private string prevPos = "";
@@ -64,7 +63,6 @@ public class Dialogue : MonoBehaviour
     {
         index = 0;
         textComponent.text = string.Empty;
-        UILayer = LayerMask.NameToLayer("UI");
 
         parser = GameObject.Find("DialogueParser").GetComponent<DialogueParser>();
         lines = parser.GetLines("Start");
@@ -85,24 +83,18 @@ public class Dialogue : MonoBehaviour
         dialogueOption1.onClick.AddListener(OnDialogueOption1Click);
         dialogueOption2.onClick.AddListener(OnDialogueOption2Click);
 
+        UpdateDialogueBox();
         StartDialogue();
     }
 
     //if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended && validInput) - for mobile, !EventSystem.current.IsPointerOverGameObject() for pc
     void Update()
     {
-        print(Utils.IsPointerOverUIElement(UILayer) ? "Over UI" : "Not over UI");
-        // If DialogueBox text has not yet loaded
-        if (Input.GetKeyDown(KeyCode.D))
+        print(Utils.IsPointerOverUIElement(DialogueArea) ? "Over UI" : "Not over UI");
+        
+        if (Utils.IsPointerOverUIElement(DialogueArea))
         {
-            DialogueArea.GetComponent<Image>().raycastTarget = false;
-        }
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            DialogueArea.GetComponent<Image>().raycastTarget = true;
-        }
-        if (Utils.IsPointerOverUIElement(UILayer))
-        {
+            // If DialogueBox text has not yet loaded
             if (Input.GetMouseButtonDown(0) && textComponent.text != lines[index].content)
             {
                 StopAllCoroutines();
@@ -137,8 +129,7 @@ public class Dialogue : MonoBehaviour
 
     //runs once every DialogueLine
     void StartDialogue()
-    {
-        
+    {       
         UpdateCharacterImage();
         UpdateDialogueBox();
         StartCoroutine(TypeLine()); // TO BE PLACED ELSEWHERE

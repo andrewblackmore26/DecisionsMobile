@@ -11,19 +11,21 @@ public class Utils
 
     //--------------------------------------------------------------------------------------------------
     //This set of functions are used to find if pointer is over UI Element
-    public bool IsPointerOverUIElement(int UILayer)
+    public bool IsPointerOverUIElement(GameObject go)
     {
-        return IsPointerOverUIElement(GetEventSystemRaycastResults(), UILayer);
+        return IsPointerOverUIElement(GetEventSystemRaycastResults(), go);
     }
 
     //Returns 'true' if we touched or hovering on Unity UI element.
-    private bool IsPointerOverUIElement(List<RaycastResult> eventSystemRaysastResults, int UILayer)
+    private bool IsPointerOverUIElement(List<RaycastResult> eventSystemRaysastResults, GameObject go)
     {
         for (int index = 0; index < eventSystemRaysastResults.Count; index++)
         {
             RaycastResult curRaysastResult = eventSystemRaysastResults[index];
-            if (curRaysastResult.gameObject.layer == UILayer)
+            if (curRaysastResult.gameObject == go)
+            {
                 return true;
+            }                
         }
         return false;
     }
