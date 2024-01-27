@@ -139,7 +139,7 @@ public class Dialogue : MonoBehaviour
     void StartDialogue()
     {
         
-        StartCoroutine(UpdateCharacterImage());
+        UpdateCharacterImage();
         UpdateDialogueBox();
         StartCoroutine(TypeLine()); // TO BE PLACED ELSEWHERE
         // display choices, if any, for this dialogue line
@@ -157,13 +157,14 @@ public class Dialogue : MonoBehaviour
     }
 
     
-    IEnumerator UpdateCharacterImage()
+    private void UpdateCharacterImage()
     {
         sprite = Resources.Load<Sprite>("Images/" + lines[index].name + "/" + lines[index].position + "/" + Utils.getEmotion(lines[index]));
 
         //It's a different character saying a line
         if (prevChar != lines[index].name)
         {
+            DialogueArea.GetComponent<Image>().raycastTarget = false;
             PlayExitAnimation();
         }
         else //when character is the same
@@ -187,7 +188,7 @@ public class Dialogue : MonoBehaviour
                 }
             }
         }
-        yield return null; // Add a short delay if needed.
+        //yield return null; // Add a short delay if needed.
     }
 
     private void PlayExitAnimation()
@@ -343,6 +344,8 @@ public class Dialogue : MonoBehaviour
             // Wait for the next frame
             yield return null;
         }
+        //reenable clicking to proceed
+        DialogueArea.GetComponent<Image>().raycastTarget = true;
         // Ensure the final color is exactly the target color
         image.color = targetColor;
     }
