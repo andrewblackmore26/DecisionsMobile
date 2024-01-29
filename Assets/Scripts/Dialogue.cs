@@ -56,7 +56,7 @@ public class Dialogue : MonoBehaviour
     private int index = 0;
     private string prevChar = "";
     private string prevPos = "";
-    //private int prevBox = 0;
+    private int currBox = 1;
     private int prevPosR = 0;
 
     void Start()
@@ -90,8 +90,17 @@ public class Dialogue : MonoBehaviour
     //if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended && validInput) - for mobile, !EventSystem.current.IsPointerOverGameObject() for pc
     void Update()
     {
-        print(Utils.IsPointerOverUIElement(DialogueArea) ? "Over UI" : "Not over UI");
-        
+        //print(Utils.IsPointerOverUIElement(DialogueArea) ? "Over UI" : "Not over UI");
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            CloseBox(dialogueBox);
+        }
+
+        // Example: Enable raycast target when the user presses the 'E' key
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            dialogueBox.SetActive(true);
+        }
         if (Utils.IsPointerOverUIElement(DialogueArea))
         {
             // If DialogueBox text has not yet loaded
@@ -129,7 +138,7 @@ public class Dialogue : MonoBehaviour
 
     //runs once every DialogueLine
     void StartDialogue()
-    {       
+    {
         UpdateCharacterImage();
         UpdateDialogueBox();
         StartCoroutine(TypeLine()); // TO BE PLACED ELSEWHERE
@@ -371,15 +380,13 @@ public class Dialogue : MonoBehaviour
         {
             //FOR NARRATOR
         }
-        print(prevChar + " " + lines[index].position);
+        print(prevChar + " " + prevPos);
     }
 
     void UpdateBottomOfDialogueBox(GameObject image)
     {
         // GET DESIRED HEIGHT
         float extensionAmount = Utils.getDialogueHeight(lines[index]);
-
-        //if (prevChar == lines[index].name)
 
         // Reset height to minimode
         RectTransform rectTransform = image.GetComponent<RectTransform>();
@@ -396,7 +403,7 @@ public class Dialogue : MonoBehaviour
             {
                 rectTransform.sizeDelta = new Vector2(currentSize.x, value);
             })
-            .setEase(LeanTweenType.easeOutBack); // You can change the ease type
+            .setEase(LeanTweenType.easeOutBack); 
 
         // Move the object upward to keep the top border in place with ease-out
         LeanTween.value(gameObject, currentPosition.y, currentPosition.y - (extensionAmount / 2.0f), 0.3f)
@@ -404,11 +411,12 @@ public class Dialogue : MonoBehaviour
             {
                 rectTransform.localPosition = new Vector3(currentPosition.x, value, currentPosition.z);
             })
-            .setEase(LeanTweenType.easeOutBack); // You can change the ease type
+            .setEase(LeanTweenType.easeOutBack); 
     }
 
-    private void AdjustBoxForSameSpeaker(GameObject image, float extensionAmount)
+    private void AdjustBoxForSameSpeaker(GameObject image)
     {
+        float extensionAmount = Utils.getDialogueHeight(lines[index]);
         RectTransform rectTransform = image.GetComponent<RectTransform>();
         Vector2 currentSize = rectTransform.sizeDelta;
         Vector3 currentPosition = rectTransform.localPosition;
@@ -417,14 +425,44 @@ public class Dialogue : MonoBehaviour
             .setOnUpdate((float value) =>
             {
                 rectTransform.sizeDelta = new Vector2(currentSize.x, value);
-            }); // You can change the ease type
+            }); 
 
         // Move the object upward to keep the top border in place with ease-out
         LeanTween.value(gameObject, currentPosition.y, currentPosition.y - (currentPosition.y - (100 + extensionAmount) / 2.0f), 0.3f)
             .setOnUpdate((float value) =>
             {
                 rectTransform.localPosition = new Vector3(currentPosition.x, value, currentPosition.z);
-            }); // You can change the ease type
+            }); 
+    }
+
+    // Handles dialogueBox closing animation
+    private void CloseBox(GameObject box)
+    {
+        RectTransform rectTransform = box.GetComponent<RectTransform>();
+        Vector2 currentSize = rectTransform.sizeDelta;
+        Vector3 currentPosition = rectTransform.localPosition;
+
+        if (currBox == 1)
+        {
+            textComponent.text = "";
+        } else
+        {
+            textComponent2.text = "";
+        }       
+
+        LeanTween.value(gameObject, currentSize.y, 100, 0.15f)
+            .setOnUpdate((float value) =>
+            {
+                rectTransform.sizeDelta = new Vector2(currentSize.x, value);
+            });
+        LeanTween.value(gameObject, currentPosition.y, currentPosition.y - (currentPosition.y - 100 / 2.0f), 0.15f)
+            .setOnUpdate((float value) =>
+            {
+                rectTransform.localPosition = new Vector3(currentPosition.x, value, currentPosition.z);
+            }).setOnComplete(() =>
+            {
+                box.SetActive(false);
+            });
     }
 
     //----------------------------------------------------------------------------------------------------------------------------------------------
