@@ -19,10 +19,6 @@ public class Dialogue : MonoBehaviour
     //Used for altering DialogueBox state/text
     public GameObject dialogueBox;
     public TextMeshProUGUI textComponent;
-    
-    public GameObject dialogueBox2;
-    public TextMeshProUGUI textComponent2;
-
     public float textSpeed;
 
     //Used to control background image transitions, slow pans
@@ -56,7 +52,6 @@ public class Dialogue : MonoBehaviour
     private int index = 0;
     private string prevChar = "";
     private string prevPos = "";
-    private int currBox = 1;
     private int prevPosR = 0;
 
     void Start()
@@ -140,8 +135,8 @@ public class Dialogue : MonoBehaviour
     void StartDialogue()
     {
         UpdateCharacterImage();
-        UpdateDialogueBox();
-        StartCoroutine(TypeLine()); // TO BE PLACED ELSEWHERE
+        StartCoroutine(UpdateDialogueBox());
+        
         // display choices, if any, for this dialogue line
         if (lines[index].options.Count > 0)
         {
@@ -364,27 +359,36 @@ public class Dialogue : MonoBehaviour
         }
     }
 
-    private void UpdateDialogueBox()
+    IEnumerator UpdateDialogueBox()
     {
         RectTransform rectTransform = dialogueBox.GetComponent<RectTransform>();
         Vector3 currentPosition = rectTransform.localPosition;
-        if (lines[index].position == "L")
+        if (prevChar == lines[index].name)
         {
+            AdjustBoxForSameSpeaker(dialogueBox);
+        } else if (lines[index].position == "L")
+        {
+            CloseBox(dialogueBox);
+            yield return new WaitForSeconds(0.15f);
             dialogueBox.transform.LeanMoveLocal(new Vector2(-70, currentPosition.y), 0.0f);
             UpdateBottomOfDialogueBox(dialogueBox);
         } else if (lines[index].position == "R")
         {
+            CloseBox(dialogueBox);
+            yield return new WaitForSeconds(0.15f);
             dialogueBox.transform.LeanMoveLocal(new Vector2(70, currentPosition.y), 0.0f);
             UpdateBottomOfDialogueBox(dialogueBox);
         } else if (lines[index].position == "N")
         {
             //FOR NARRATOR
         }
+        StartCoroutine(TypeLine()); // TO BE PLACED ELSEWHERE
         print(prevChar + " " + prevPos);
     }
 
     void UpdateBottomOfDialogueBox(GameObject image)
     {
+        
         // GET DESIRED HEIGHT
         float extensionAmount = Utils.getDialogueHeight(lines[index]);
 
@@ -396,6 +400,7 @@ public class Dialogue : MonoBehaviour
         rectTransform.localPosition = new Vector3(currentPosition.x, 120, currentPosition.z);
         currentSize = rectTransform.sizeDelta;
         currentPosition = rectTransform.localPosition;
+        dialogueBox.SetActive(true);
 
         // Extend the bottom by animating the size change with ease-out
         LeanTween.value(gameObject, currentSize.y, currentSize.y + extensionAmount, 0.3f)
@@ -442,13 +447,8 @@ public class Dialogue : MonoBehaviour
         Vector2 currentSize = rectTransform.sizeDelta;
         Vector3 currentPosition = rectTransform.localPosition;
 
-        if (currBox == 1)
-        {
-            textComponent.text = "";
-        } else
-        {
-            textComponent2.text = "";
-        }       
+        //TO CHANGE
+        textComponent.text = "";
 
         LeanTween.value(gameObject, currentSize.y, 100, 0.15f)
             .setOnUpdate((float value) =>
