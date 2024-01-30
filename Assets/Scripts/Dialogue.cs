@@ -19,6 +19,7 @@ public class Dialogue : MonoBehaviour
     //Used for altering DialogueBox state/text
     public GameObject dialogueBox;
     public TextMeshProUGUI textComponent;
+    public TextMeshProUGUI charName;
     public float textSpeed;
 
     //Used to control background image transitions, slow pans
@@ -382,8 +383,9 @@ public class Dialogue : MonoBehaviour
         {
             //FOR NARRATOR
         }
+        yield return new WaitForSeconds(0.1f);
         StartCoroutine(TypeLine()); // TO BE PLACED ELSEWHERE
-        print(prevChar + " " + prevPos);
+        //print(prevChar + " " + prevPos);
     }
 
     void UpdateBottomOfDialogueBox(GameObject image)
@@ -430,10 +432,9 @@ public class Dialogue : MonoBehaviour
             .setOnUpdate((float value) =>
             {
                 rectTransform.sizeDelta = new Vector2(currentSize.x, value);
-            }); 
-
+            });
         // Move the object upward to keep the top border in place with ease-out
-        LeanTween.value(gameObject, currentPosition.y, currentPosition.y - (currentPosition.y - (100 + extensionAmount) / 2.0f), 0.3f)
+        LeanTween.value(gameObject, currentPosition.y, currentPosition.y + ((currentSize.y - (100 + extensionAmount)) / 2.0f), 0.3f)
             .setOnUpdate((float value) =>
             {
                 rectTransform.localPosition = new Vector3(currentPosition.x, value, currentPosition.z);
@@ -455,7 +456,7 @@ public class Dialogue : MonoBehaviour
             {
                 rectTransform.sizeDelta = new Vector2(currentSize.x, value);
             });
-        LeanTween.value(gameObject, currentPosition.y, currentPosition.y - (currentPosition.y - 100 / 2.0f), 0.15f)
+        LeanTween.value(gameObject, currentPosition.y, currentPosition.y + ((currentSize.y - 100) / 2.0f), 0.15f)
             .setOnUpdate((float value) =>
             {
                 rectTransform.localPosition = new Vector3(currentPosition.x, value, currentPosition.z);
