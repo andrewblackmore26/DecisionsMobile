@@ -352,6 +352,10 @@ public class Dialogue : MonoBehaviour
 
     IEnumerator TypeLine()
     {
+        if (prevChar != lines[index].name)
+        {
+            yield return new WaitForSeconds(0.2f);
+        }
         // Type each character 1 by 1
         foreach (char c in lines[index].content)
         {
@@ -370,20 +374,24 @@ public class Dialogue : MonoBehaviour
         } else if (lines[index].position == "L")
         {
             CloseBox(dialogueBox);
-            yield return new WaitForSeconds(0.15f);
+            yield return new WaitForSeconds(0.25f);
             dialogueBox.transform.LeanMoveLocal(new Vector2(-70, currentPosition.y), 0.0f);
             UpdateBottomOfDialogueBox(dialogueBox);
         } else if (lines[index].position == "R")
         {
             CloseBox(dialogueBox);
-            yield return new WaitForSeconds(0.15f);
+            yield return new WaitForSeconds(0.25f);
             dialogueBox.transform.LeanMoveLocal(new Vector2(70, currentPosition.y), 0.0f);
             UpdateBottomOfDialogueBox(dialogueBox);
         } else if (lines[index].position == "N")
         {
-            //FOR NARRATOR
+            CloseBox(dialogueBox);
+            yield return new WaitForSeconds(0.25f);
+            dialogueBox.transform.LeanMoveLocal(new Vector2(0, 600), 0.0f);
+            UpdateBottomOfDialogueBox(dialogueBox);
         }
-        yield return new WaitForSeconds(0.1f);
+        charName.text = lines[index].name;
+        yield return new WaitForSeconds(0.2f);       
         StartCoroutine(TypeLine()); // TO BE PLACED ELSEWHERE
         //print(prevChar + " " + prevPos);
     }
@@ -405,7 +413,7 @@ public class Dialogue : MonoBehaviour
         dialogueBox.SetActive(true);
 
         // Extend the bottom by animating the size change with ease-out
-        LeanTween.value(gameObject, currentSize.y, currentSize.y + extensionAmount, 0.3f)
+        LeanTween.value(gameObject, currentSize.y, currentSize.y + extensionAmount, 0.4f)
             .setOnUpdate((float value) =>
             {
                 rectTransform.sizeDelta = new Vector2(currentSize.x, value);
@@ -413,7 +421,7 @@ public class Dialogue : MonoBehaviour
             .setEase(LeanTweenType.easeOutBack); 
 
         // Move the object upward to keep the top border in place with ease-out
-        LeanTween.value(gameObject, currentPosition.y, currentPosition.y - (extensionAmount / 2.0f), 0.3f)
+        LeanTween.value(gameObject, currentPosition.y, currentPosition.y - (extensionAmount / 2.0f), 0.4f)
             .setOnUpdate((float value) =>
             {
                 rectTransform.localPosition = new Vector3(currentPosition.x, value, currentPosition.z);
@@ -428,13 +436,13 @@ public class Dialogue : MonoBehaviour
         Vector2 currentSize = rectTransform.sizeDelta;
         Vector3 currentPosition = rectTransform.localPosition;
         // Extend the bottom by animating the size change with ease-out
-        LeanTween.value(gameObject, currentSize.y, 100 + extensionAmount, 0.3f)
+        LeanTween.value(gameObject, currentSize.y, 100 + extensionAmount, 0.2f)
             .setOnUpdate((float value) =>
             {
                 rectTransform.sizeDelta = new Vector2(currentSize.x, value);
             });
         // Move the object upward to keep the top border in place with ease-out
-        LeanTween.value(gameObject, currentPosition.y, currentPosition.y + ((currentSize.y - (100 + extensionAmount)) / 2.0f), 0.3f)
+        LeanTween.value(gameObject, currentPosition.y, currentPosition.y + ((currentSize.y - (100 + extensionAmount)) / 2.0f), 0.2f)
             .setOnUpdate((float value) =>
             {
                 rectTransform.localPosition = new Vector3(currentPosition.x, value, currentPosition.z);
@@ -450,6 +458,7 @@ public class Dialogue : MonoBehaviour
 
         //TO CHANGE
         textComponent.text = "";
+        charName.text = "";
 
         LeanTween.value(gameObject, currentSize.y, 100, 0.15f)
             .setOnUpdate((float value) =>
