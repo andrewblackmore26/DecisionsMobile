@@ -9,6 +9,20 @@ using UnityEngine.EventSystems;
 public class Utils
 {
 
+    public void RepositionBox(GameObject box, DialogueLine line)
+    {
+        if (line.position == "L")
+        {
+            box.transform.LeanMoveLocal(new Vector2(-70, 0), 0.0f);
+        } else if (line.position == "R")
+        {
+            box.transform.LeanMoveLocal(new Vector2(70, 0), 0.0f);
+        } else if (line.position == "N")
+        {
+            box.transform.LeanMoveLocal(new Vector2(0, 600), 0.0f);
+        }
+    }
+
     //--------------------------------------------------------------------------------------------------
     //This set of functions are used to find if pointer is over UI Element
     public bool IsPointerOverUIElement(GameObject go)

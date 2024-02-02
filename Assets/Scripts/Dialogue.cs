@@ -79,23 +79,20 @@ public class Dialogue : MonoBehaviour
         dialogueOption1.onClick.AddListener(OnDialogueOption1Click);
         dialogueOption2.onClick.AddListener(OnDialogueOption2Click);
 
-        UpdateDialogueBox();
+        Utils.RepositionBox(dialogueBox, lines[0]);
         StartDialogue();
     }
 
     //if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended && validInput) - for mobile, !EventSystem.current.IsPointerOverGameObject() for pc
     void Update()
     {
-        //print(Utils.IsPointerOverUIElement(DialogueArea) ? "Over UI" : "Not over UI");
         if (Input.GetKeyDown(KeyCode.D))
         {
-            CloseBox(dialogueBox);
+            //CloseBox(dialogueBox);
         }
-
-        // Example: Enable raycast target when the user presses the 'E' key
         if (Input.GetKeyDown(KeyCode.E))
         {
-            dialogueBox.SetActive(true);
+            //dialogueBox.SetActive(true);
         }
         if (Utils.IsPointerOverUIElement(DialogueArea))
         {
@@ -137,7 +134,6 @@ public class Dialogue : MonoBehaviour
     {
         UpdateCharacterImage();
         StartCoroutine(UpdateDialogueBox());
-        
         // display choices, if any, for this dialogue line
         if (lines[index].options.Count > 0)
         {
@@ -257,7 +253,7 @@ public class Dialogue : MonoBehaviour
         }
         else
         {
-            Debug.Log("No position for image given: error!");
+            Debug.Log("No position for image given or this is Narrator speaking: error!");
         }
     }
 
@@ -341,7 +337,7 @@ public class Dialogue : MonoBehaviour
             yield return null;
         }
         //reenable clicking to proceed
-        DialogueArea.GetComponent<Image>().raycastTarget = true;
+
         // Ensure the final color is exactly the target color
         image.color = targetColor;
     }
@@ -362,6 +358,7 @@ public class Dialogue : MonoBehaviour
             textComponent.text += c;
             yield return new WaitForSeconds(textSpeed);
         }
+        DialogueArea.GetComponent<Image>().raycastTarget = true;
     }
 
     IEnumerator UpdateDialogueBox()
@@ -371,29 +368,17 @@ public class Dialogue : MonoBehaviour
         if (prevChar == lines[index].name)
         {
             AdjustBoxForSameSpeaker(dialogueBox);
-        } else if (lines[index].position == "L")
+        }
+        else
         {
             CloseBox(dialogueBox);
-            yield return new WaitForSeconds(0.25f);
-            dialogueBox.transform.LeanMoveLocal(new Vector2(-70, currentPosition.y), 0.0f);
-            UpdateBottomOfDialogueBox(dialogueBox);
-        } else if (lines[index].position == "R")
-        {
-            CloseBox(dialogueBox);
-            yield return new WaitForSeconds(0.25f);
-            dialogueBox.transform.LeanMoveLocal(new Vector2(70, currentPosition.y), 0.0f);
-            UpdateBottomOfDialogueBox(dialogueBox);
-        } else if (lines[index].position == "N")
-        {
-            CloseBox(dialogueBox);
-            yield return new WaitForSeconds(0.25f);
-            dialogueBox.transform.LeanMoveLocal(new Vector2(0, 600), 0.0f);
+            yield return new WaitForSeconds(0.4f);
+            Utils.RepositionBox(dialogueBox, lines[index]);
             UpdateBottomOfDialogueBox(dialogueBox);
         }
         charName.text = lines[index].name;
-        yield return new WaitForSeconds(0.2f);       
-        StartCoroutine(TypeLine()); // TO BE PLACED ELSEWHERE
-        //print(prevChar + " " + prevPos);
+        yield return new WaitForSeconds(0.2f);
+        StartCoroutine(TypeLine());
     }
 
     void UpdateBottomOfDialogueBox(GameObject image)
@@ -401,13 +386,15 @@ public class Dialogue : MonoBehaviour
         
         // GET DESIRED HEIGHT
         float extensionAmount = Utils.getDialogueHeight(lines[index]);
+        int posY = 120;
+        if (lines[index].position == "N") posY = 600;
 
-        // Reset height to minimode
+        // Reset height and position to minimode
         RectTransform rectTransform = image.GetComponent<RectTransform>();
         Vector2 currentSize = rectTransform.sizeDelta;
         Vector3 currentPosition = rectTransform.localPosition;
         rectTransform.sizeDelta = new Vector2(currentSize.x, 100);
-        rectTransform.localPosition = new Vector3(currentPosition.x, 120, currentPosition.z);
+        rectTransform.localPosition = new Vector3(currentPosition.x, posY, currentPosition.z);
         currentSize = rectTransform.sizeDelta;
         currentPosition = rectTransform.localPosition;
         dialogueBox.SetActive(true);
