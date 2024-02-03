@@ -54,6 +54,7 @@ public class Dialogue : MonoBehaviour
     private string prevChar = "";
     private string prevPos = "";
     private int prevPosR = 0;
+    private Image currEmotion;
 
     void Start()
     {
@@ -79,7 +80,7 @@ public class Dialogue : MonoBehaviour
         dialogueOption1.onClick.AddListener(OnDialogueOption1Click);
         dialogueOption2.onClick.AddListener(OnDialogueOption2Click);
 
-        Utils.RepositionBox(dialogueBox, lines[0]);
+        print(lines[index].position);       
         StartDialogue();
     }
 
@@ -101,6 +102,7 @@ public class Dialogue : MonoBehaviour
             {
                 StopAllCoroutines();
                 textComponent.text = lines[index].content;
+                currEmotion.color = Utils.getDialogueColour(lines[index]);
             }
             //text already loaded in dialoguebox -> go to next dialogueLine
             else if (Input.GetMouseButtonDown(0) && index + 1 < lines.Count)
@@ -152,11 +154,10 @@ public class Dialogue : MonoBehaviour
     private void UpdateCharacterImage()
     {
         sprite = Resources.Load<Sprite>("Images/" + lines[index].name + "/" + lines[index].position + "/" + Utils.getEmotion(lines[index]));
-
+        DialogueArea.GetComponent<Image>().raycastTarget = false;
         //It's a different character saying a line
         if (prevChar != lines[index].name)
         {
-            DialogueArea.GetComponent<Image>().raycastTarget = false;
             PlayExitAnimation();
         }
         else //when character is the same
@@ -321,6 +322,9 @@ public class Dialogue : MonoBehaviour
         // Convert hex color code to Color
         Color startColor = image.color;
 
+        //for when coroutine is stopped early
+        currEmotion = image;
+
         float elapsedTime = 0f;
         while (elapsedTime < transitionTime)
         {
@@ -336,8 +340,6 @@ public class Dialogue : MonoBehaviour
             // Wait for the next frame
             yield return null;
         }
-        //reenable clicking to proceed
-
         // Ensure the final color is exactly the target color
         image.color = targetColor;
     }
@@ -348,17 +350,14 @@ public class Dialogue : MonoBehaviour
 
     IEnumerator TypeLine()
     {
-        if (prevChar != lines[index].name)
-        {
-            yield return new WaitForSeconds(0.2f);
-        }
+        DialogueArea.GetComponent<Image>().raycastTarget = true;
         // Type each character 1 by 1
         foreach (char c in lines[index].content)
         {
             textComponent.text += c;
             yield return new WaitForSeconds(textSpeed);
         }
-        DialogueArea.GetComponent<Image>().raycastTarget = true;
+        
     }
 
     IEnumerator UpdateDialogueBox()
@@ -386,15 +385,13 @@ public class Dialogue : MonoBehaviour
         
         // GET DESIRED HEIGHT
         float extensionAmount = Utils.getDialogueHeight(lines[index]);
-        int posY = 120;
-        if (lines[index].position == "N") posY = 600;
 
         // Reset height and position to minimode
         RectTransform rectTransform = image.GetComponent<RectTransform>();
         Vector2 currentSize = rectTransform.sizeDelta;
         Vector3 currentPosition = rectTransform.localPosition;
         rectTransform.sizeDelta = new Vector2(currentSize.x, 100);
-        rectTransform.localPosition = new Vector3(currentPosition.x, posY, currentPosition.z);
+        rectTransform.localPosition = new Vector3(currentPosition.x, currentPosition.y, currentPosition.z);
         currentSize = rectTransform.sizeDelta;
         currentPosition = rectTransform.localPosition;
         dialogueBox.SetActive(true);
