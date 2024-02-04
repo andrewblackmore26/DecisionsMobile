@@ -51,8 +51,8 @@ public class Dialogue : MonoBehaviour
     //Used for logic controlling game
     private Utils Utils;
     private int index = 0;
-    private string prevChar = "";
-    private string prevPos = "";
+    private string prevChar = "QQQQQ";
+    private string prevPos = "QQQQQ";
     private int prevPosR = 0;
     private Image currEmotion;
 
@@ -79,8 +79,7 @@ public class Dialogue : MonoBehaviour
         dialogueOption0.onClick.AddListener(OnDialogueOption0Click);
         dialogueOption1.onClick.AddListener(OnDialogueOption1Click);
         dialogueOption2.onClick.AddListener(OnDialogueOption2Click);
-
-        print(lines[index].position);       
+    
         StartDialogue();
     }
 
