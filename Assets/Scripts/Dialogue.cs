@@ -25,6 +25,7 @@ public class Dialogue : MonoBehaviour
     //Used to control background image transitions, slow pans
     public GameObject backgroundImage;
     public GameObject backgroundImage2;
+    private Stage stage;
 
     //Used for handling image transitions/transparency/movement
     public Image imageLeft;
@@ -75,6 +76,9 @@ public class Dialogue : MonoBehaviour
         dialogueOptions.Add(dialogueOption0);
         dialogueOptions.Add(dialogueOption1);
         dialogueOptions.Add(dialogueOption2);
+
+        //setting up background
+        stage = new StageLeft(backgroundImage);
 
         dialogueOption0.onClick.AddListener(OnDialogueOption0Click);
         dialogueOption1.onClick.AddListener(OnDialogueOption1Click);
@@ -222,24 +226,36 @@ public class Dialogue : MonoBehaviour
             c.a = val;
             image.color = c;
         });
-        if (lines[index].position == "R") // Move backgroundImage towards new speaker
+        
+        /*if (lines[index].position == "R" && stage is StageLeft) // Move backgroundImage towards new speaker
         {
-            backgroundImage.transform.LeanMoveLocal(new Vector2(1.5f, 0), 0.3f);
+            //backgroundImage.transform.LeanMoveLocal(new Vector2(1.5f, 0), 0.3f);
+            stage = stage.transition();
         }
-        else if (lines[index].position == "L")
+        else if (lines[index].position == "L" && stage is StageRight)
         {
-            backgroundImage.transform.LeanMoveLocal(new Vector2(2.5f, 0), 0.3f);
-        }
+            //backgroundImage.transform.LeanMoveLocal(new Vector2(2.5f, 0), 0.3f);
+            stage = stage.transition();
+        }*/
     }
 
     private void PlayEntryAnimation()
     {
+        print(lines[index].position + " : " + stage.GetType());
         if (lines[index].position == "L")
         {
+            if (stage is StageRight)
+            {
+                stage = stage.transition();
+            }
             characterEntry(imageLeft);
         }
         else if (lines[index].position == "R")
         {
+            if (stage is StageLeft)
+            {
+                stage = stage.transition();
+            }
             if (prevPosR < 2)
             {
                 characterEntry(imageRight2);
@@ -250,10 +266,6 @@ public class Dialogue : MonoBehaviour
                 characterEntry(imageRight);
                 prevPosR = 1;
             }
-        }
-        else
-        {
-            Debug.Log("No position for image given or this is Narrator speaking: error!");
         }
     }
 
