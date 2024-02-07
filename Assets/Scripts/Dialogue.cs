@@ -226,17 +226,6 @@ public class Dialogue : MonoBehaviour
             c.a = val;
             image.color = c;
         });
-        
-        /*if (lines[index].position == "R" && stage is StageLeft) // Move backgroundImage towards new speaker
-        {
-            //backgroundImage.transform.LeanMoveLocal(new Vector2(1.5f, 0), 0.3f);
-            stage = stage.transition();
-        }
-        else if (lines[index].position == "L" && stage is StageRight)
-        {
-            //backgroundImage.transform.LeanMoveLocal(new Vector2(2.5f, 0), 0.3f);
-            stage = stage.transition();
-        }*/
     }
 
     private void PlayEntryAnimation()
