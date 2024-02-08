@@ -4,10 +4,16 @@ using UnityEngine.UI;
 using System;
 using UnityEngine.EventSystems;
 
-public interface Stage
+public abstract class Stage
 {
-    public Stage transition();
+    public GameObject backgroundImage;
+    public GameObject backgroundImage2;
 
-    //not yet implemented
-    public void shake();
+    public abstract Stage transition();
+    public abstract Stage switchSides();
+
+    public void shake()
+    {
+        //not yet implemented
+    }
 }

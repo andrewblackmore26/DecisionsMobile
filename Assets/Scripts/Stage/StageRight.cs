@@ -6,22 +6,20 @@ using UnityEngine.EventSystems;
 
 public class StageRight : Stage
 {
-    public GameObject backgroundImage;
-
     public StageRight(GameObject backgroundImage) 
     {
         this.backgroundImage = backgroundImage;
     }
 
-    public Stage transition()
+    public override Stage switchSides()
     {
         Debug.Log("Moving left");
-        backgroundImage.transform.LeanMoveLocal(new Vector2(2.5f, 0), 0.3f);
+        backgroundImage.transform.LeanMoveLocal(new Vector2(3.0f, 0), 0.4f);
         return new StageLeft(backgroundImage);
     }
 
-    public void shake()
+    public override Stage transition()
     {
-        //not yet implemented
+        return null;
     }
 }

@@ -235,7 +235,7 @@ public class Dialogue : MonoBehaviour
         {
             if (stage is StageRight)
             {
-                stage = stage.transition();
+                stage = stage.switchSides();
             }
             characterEntry(imageLeft);
         }
@@ -243,7 +243,7 @@ public class Dialogue : MonoBehaviour
         {
             if (stage is StageLeft)
             {
-                stage = stage.transition();
+                stage = stage.switchSides();
             }
             if (prevPosR < 2)
             {
