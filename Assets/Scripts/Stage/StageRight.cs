@@ -13,7 +13,6 @@ public class StageRight : Stage
 
     public override Stage switchSides()
     {
-        Debug.Log("Moving left");
         backgroundImage.transform.LeanMoveLocal(new Vector2(3.0f, 0), 0.4f);
         return new StageLeft(backgroundImage);
     }

@@ -103,15 +103,17 @@ public class Dialogue : MonoBehaviour
             // If DialogueBox text has not yet loaded
             if (Input.GetMouseButtonDown(0) && textComponent.text != lines[index].content)
             {
+                print("1 trigger");
                 StopAllCoroutines();
                 textComponent.text = lines[index].content;
-                currEmotion.color = Utils.getDialogueColour(lines[index]);
+                if (currEmotion) { currEmotion.color = Utils.getDialogueColour(lines[index]); }
             }
             //text already loaded in dialoguebox -> go to next dialogueLine
             else if (Input.GetMouseButtonDown(0) && index + 1 < lines.Count)
             {
                 textComponent.text = string.Empty;
                 index += 1;
+                print("2 trigger");
                 //end of dialogue nodes
                 if (index == lines.Count)
                 {
@@ -122,14 +124,18 @@ public class Dialogue : MonoBehaviour
                     StartDialogue();
                 }
             }
-            //for option clicks (i think)
             else if (Input.GetMouseButtonDown(0) && index < lines.Count && lines[index].next != "")
             {
+                print("3 trigger");
+                stage.transitions(backgroundImage);
                 string key = lines[index].next;
                 index = 0;
                 lines = parser.GetLines(key);
                 textComponent.text = string.Empty;
                 StartDialogue();
+            } else
+            {
+                print("END OF THE LINE BUD!");
             }
         } 
     }
@@ -230,7 +236,6 @@ public class Dialogue : MonoBehaviour
 
     private void PlayEntryAnimation()
     {
-        print(lines[index].position + " : " + stage.GetType());
         if (lines[index].position == "L")
         {
             if (stage is StageRight)
@@ -299,13 +304,6 @@ public class Dialogue : MonoBehaviour
             }
         }
         image.transform.LeanScale(Vector2.one, 0.5f);
-        //FADE ANIMATION - CURRENTLY NOT WORKING
-        LeanTween.value(gameObject, 0, 1, 1.5f).setOnUpdate((float val) =>
-        {
-            Color c = image.color;
-            c.a = val;
-            image.color = c;
-        });
     }
 
     //ADD BLUR TO TRANSITION

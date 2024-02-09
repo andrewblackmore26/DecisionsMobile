@@ -16,4 +16,10 @@ public abstract class Stage
     {
         //not yet implemented
     }
+
+    public void transitions(GameObject bg)
+    {
+        float fadeDuration = 0.3f;
+        LeanTween.alpha(backgroundImage, 0.0f, fadeDuration);
+    }
 }
