@@ -114,15 +114,7 @@ public class Dialogue : MonoBehaviour
                 textComponent.text = string.Empty;
                 index += 1;
                 print("2 trigger");
-                //end of dialogue nodes
-                if (index == lines.Count)
-                {
-                    dialogueBox.SetActive(false); // might be unused
-                }
-                else
-                {
-                    StartDialogue();
-                }
+                StartDialogue();
             }
             else if (Input.GetMouseButtonDown(0) && index < lines.Count && lines[index].next != "")
             {
@@ -145,7 +137,13 @@ public class Dialogue : MonoBehaviour
     {
         UpdateCharacterImage();
         StartCoroutine(UpdateDialogueBox());
-        // display choices, if any, for this dialogue line
+        handleChoices();
+        prevChar = lines[index].name;
+    }
+
+    // display choices, if any, for this dialogue line
+    private void handleChoices()
+    {
         if (lines[index].options.Count > 0)
         {
             DisplayChoices();
@@ -156,9 +154,7 @@ public class Dialogue : MonoBehaviour
             dialogueOption1.gameObject.SetActive(false);
             dialogueOption2.gameObject.SetActive(false);
         }
-        prevChar = lines[index].name;
     }
-
     
     private void UpdateCharacterImage()
     {
