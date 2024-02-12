@@ -10,7 +10,7 @@ using UnityEngine.EventSystems;
 public class Dialogue : MonoBehaviour
 {
     //UI Areas for handling clicks
-    public GameObject DialogueArea;
+    public GameObject dialogueArea;
 
     //Used for loading DialogueLines
     public DialogueParser parser;
@@ -83,6 +83,8 @@ public class Dialogue : MonoBehaviour
         dialogueOption0.onClick.AddListener(OnDialogueOption0Click);
         dialogueOption1.onClick.AddListener(OnDialogueOption1Click);
         dialogueOption2.onClick.AddListener(OnDialogueOption2Click);
+
+        print(backgroundImage);
     
         StartDialogue();
     }
@@ -98,12 +100,11 @@ public class Dialogue : MonoBehaviour
         {
             //dialogueBox.SetActive(true);
         }
-        if (Utils.IsPointerOverUIElement(DialogueArea))
+        if (Utils.IsPointerOverUIElement(dialogueArea))
         {
             // If DialogueBox text has not yet loaded
             if (Input.GetMouseButtonDown(0) && textComponent.text != lines[index].content)
             {
-                print("1 trigger");
                 StopAllCoroutines();
                 textComponent.text = lines[index].content;
                 if (currEmotion) { currEmotion.color = Utils.getDialogueColour(lines[index]); }
@@ -113,13 +114,11 @@ public class Dialogue : MonoBehaviour
             {
                 textComponent.text = string.Empty;
                 index += 1;
-                print("2 trigger");
                 StartDialogue();
             }
             else if (Input.GetMouseButtonDown(0) && index < lines.Count && lines[index].next != "")
             {
-                print("3 trigger");
-                stage.transitions(backgroundImage);
+                print("3 trigger");             
                 string key = lines[index].next;
                 index = 0;
                 lines = parser.GetLines(key);
@@ -135,10 +134,29 @@ public class Dialogue : MonoBehaviour
     //runs once every DialogueLine
     void StartDialogue()
     {
-        UpdateCharacterImage();
-        StartCoroutine(UpdateDialogueBox());
+        if (lines[index].name == "T")
+        {
+            PlayExitAnimation();
+            CloseBox(dialogueBox);
+            BackgroundTransition();
+        } else
+        {
+            UpdateCharacterImage();
+            StartCoroutine(UpdateDialogueBox());            
+        }
         handleChoices();
         prevChar = lines[index].name;
+    }
+
+    private void BackgroundTransition()
+    {
+        Sprite newSprite = Resources.Load<Sprite>("Images/Background/UndergroundMarket");
+        backgroundImage2.GetComponent<SpriteRenderer>().sprite = newSprite;
+        float fadeDuration = 0.5f;
+        LeanTween.alpha(backgroundImage, 0.0f, fadeDuration).setOnComplete(() =>
+        {
+            dialogueArea.SetActive(true);
+        });     
     }
 
     // display choices, if any, for this dialogue line
@@ -159,7 +177,7 @@ public class Dialogue : MonoBehaviour
     private void UpdateCharacterImage()
     {
         sprite = Resources.Load<Sprite>("Images/" + lines[index].name + "/" + lines[index].position + "/" + Utils.getEmotion(lines[index]));
-        DialogueArea.GetComponent<Image>().raycastTarget = false;
+        dialogueArea.GetComponent<Image>().raycastTarget = false;
         //It's a different character saying a line
         if (prevChar != lines[index].name)
         {
@@ -222,12 +240,6 @@ public class Dialogue : MonoBehaviour
             image.transform.LeanMoveLocal(new Vector2(971, -292), 0.5f);
         }
         image.transform.LeanScale(Vector2.zero, 0.5f);
-        LeanTween.value(gameObject, 1, 0f, 0.5f).setOnUpdate((float val) =>
-        {
-            Color c = image.color;
-            c.a = val;
-            image.color = c;
-        });
     }
 
     private void PlayEntryAnimation()
@@ -344,7 +356,7 @@ public class Dialogue : MonoBehaviour
 
     IEnumerator TypeLine()
     {
-        DialogueArea.GetComponent<Image>().raycastTarget = true;
+        dialogueArea.GetComponent<Image>().raycastTarget = true;
         // Type each character 1 by 1
         foreach (char c in lines[index].content)
         {
