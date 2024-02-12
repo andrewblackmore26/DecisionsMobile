@@ -78,13 +78,11 @@ public class Dialogue : MonoBehaviour
         dialogueOptions.Add(dialogueOption2);
 
         //setting up background
-        stage = new StageLeft(backgroundImage);
+        stage = new StageLeft(backgroundImage, backgroundImage2);
 
         dialogueOption0.onClick.AddListener(OnDialogueOption0Click);
         dialogueOption1.onClick.AddListener(OnDialogueOption1Click);
         dialogueOption2.onClick.AddListener(OnDialogueOption2Click);
-
-        print(backgroundImage);
     
         StartDialogue();
     }
@@ -95,10 +93,6 @@ public class Dialogue : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.D))
         {
             //CloseBox(dialogueBox);
-        }
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            //dialogueBox.SetActive(true);
         }
         if (Utils.IsPointerOverUIElement(dialogueArea))
         {
@@ -138,7 +132,7 @@ public class Dialogue : MonoBehaviour
         {
             PlayExitAnimation();
             CloseBox(dialogueBox);
-            BackgroundTransition();
+            stage.BackgroundTransition(dialogueArea);
         } else
         {
             UpdateCharacterImage();
@@ -146,17 +140,6 @@ public class Dialogue : MonoBehaviour
         }
         handleChoices();
         prevChar = lines[index].name;
-    }
-
-    private void BackgroundTransition()
-    {
-        Sprite newSprite = Resources.Load<Sprite>("Images/Background/UndergroundMarket");
-        backgroundImage2.GetComponent<SpriteRenderer>().sprite = newSprite;
-        float fadeDuration = 0.5f;
-        LeanTween.alpha(backgroundImage, 0.0f, fadeDuration).setOnComplete(() =>
-        {
-            dialogueArea.SetActive(true);
-        });     
     }
 
     // display choices, if any, for this dialogue line
