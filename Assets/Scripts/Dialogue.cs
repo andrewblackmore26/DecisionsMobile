@@ -182,6 +182,7 @@ public class Dialogue : MonoBehaviour
         if (prevChar != lines[index].name)
         {
             PlayExitAnimation();
+            PlayEntryAnimation();
         }
         else //when character is the same
         {
@@ -211,35 +212,23 @@ public class Dialogue : MonoBehaviour
     {
         if (prevPos == "L") //previous character on Left - Useful function: setOnComplete(() => function());
         {
-            characterExit(imageLeft);
+            imageLeft.transform.LeanMoveLocal(new Vector2(-964, -292), 0.5f);
+            imageLeft.transform.LeanScale(Vector2.zero, 0.5f);
         }
         else if (prevPos == "R") //previous character on Right
         {
             if (prevPosR == 1)
             {
-                characterExit(imageRight);
-
+                imageRight.transform.LeanMoveLocal(new Vector2(971, -292), 0.5f);
+                imageRight.transform.LeanScale(Vector2.zero, 0.5f);
             }
             else if (prevPosR == 2)
             {
-                characterExit(imageRight2);
+                imageRight2.transform.LeanMoveLocal(new Vector2(971, -292), 0.5f);
+                imageRight2.transform.LeanScale(Vector2.zero, 0.5f);
             }
-        }
-        PlayEntryAnimation();
+        }        
         prevPos = lines[index].position;
-    }
-
-    private void characterExit(Image image)
-    {
-        if (prevPos == "L")
-        {
-            image.transform.LeanMoveLocal(new Vector2(-964, -292), 0.5f);
-        }
-        else if (prevPos == "R")
-        {
-            image.transform.LeanMoveLocal(new Vector2(971, -292), 0.5f);
-        }
-        image.transform.LeanScale(Vector2.zero, 0.5f);
     }
 
     private void PlayEntryAnimation()
