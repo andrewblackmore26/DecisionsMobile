@@ -78,7 +78,7 @@ public class Dialogue : MonoBehaviour
         dialogueOptions.Add(dialogueOption2);
 
         //setting up background
-        stage = new StageLeft(backgroundImage, backgroundImage2);
+        stage = new StageLeft(backgroundImage, backgroundImage2, this);
 
         dialogueOption0.onClick.AddListener(OnDialogueOption0Click);
         dialogueOption1.onClick.AddListener(OnDialogueOption1Click);
@@ -130,6 +130,7 @@ public class Dialogue : MonoBehaviour
     {
         if (lines[index].name == "T")
         {
+            //dialogueArea.raycast = false;
             PlayExitAnimation();
             CloseBox(dialogueBox);
             stage.BackgroundTransition(dialogueArea);
@@ -495,6 +496,12 @@ public class Dialogue : MonoBehaviour
         //Debug.Log("Button " + num + " clicked!");
         lines = parser.GetLines(key);
         textComponent.text = string.Empty;
+        StartDialogue();
+    }
+
+    public void nextLine()
+    {
+        index++;
         StartDialogue();
     }
 }
