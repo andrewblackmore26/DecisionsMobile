@@ -26,6 +26,6 @@ public class DialogueLine
 
     public override string ToString()
     {
-        return name + " " + content + " " + emotion;
+        return "name: " + name + " content: " + content + " emotion(int): " + emotion + " position: " + position;
     }
 }

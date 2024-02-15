@@ -133,7 +133,7 @@ public class Dialogue : MonoBehaviour
             //dialogueArea.raycast = false;
             PlayExitAnimation();
             CloseBox(dialogueBox);
-            stage.BackgroundTransition(dialogueArea);
+            stage.BackgroundTransition(dialogueArea, lines[index]);
         } else
         {
             UpdateCharacterImage();

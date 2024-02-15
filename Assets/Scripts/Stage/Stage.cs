@@ -32,7 +32,7 @@ public abstract class Stage
     }
 
 
-    public void BackgroundTransition(GameObject area)
+    public void BackgroundTransition(GameObject area, DialogueLine line)
     {
         Transform transform = getBackgroundImage().GetComponent<Transform>();
         Vector3 currentPosition = transform.localPosition;
@@ -48,6 +48,7 @@ public abstract class Stage
             rearrangeBackgrounds(newSprite);
             dialogue.nextLine();
         });
+        Debug.Log(line);
     }
 
     private void rearrangeBackgrounds(Sprite newSprite)
