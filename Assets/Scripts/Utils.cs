@@ -13,10 +13,10 @@ public class Utils
     {
         if (line.position == "L")
         {
-            box.transform.LeanMoveLocal(new Vector2(-70, 120), 0.0f);
+            box.transform.LeanMoveLocal(new Vector2(-70, -10), 0.0f);
         } else if (line.position == "R")
         {
-            box.transform.LeanMoveLocal(new Vector2(70, 120), 0.0f);
+            box.transform.LeanMoveLocal(new Vector2(70, -10), 0.0f);
         } else if (line.position == "N")
         {
             box.transform.LeanMoveLocal(new Vector2(0, 500), 0.0f);
