@@ -9,6 +9,8 @@ public abstract class Stage
     private GameObject backgroundImage;
     private GameObject backgroundImage2;
     private Dialogue dialogue;
+    private float x;
+    private float y;
 
     public abstract Stage transition();
     public abstract Stage switchSides();
@@ -39,7 +41,9 @@ public abstract class Stage
         transform.localPosition = new Vector3(currentPosition.x, currentPosition.y, currentPosition.z);
         currentPosition = transform.localPosition;
 
-        Sprite newSprite = Resources.Load<Sprite>("Images/Background/UndergroundMarket");
+        string bgName = line.content;
+
+        Sprite newSprite = Resources.Load<Sprite>("Images/Background/" + bgName);
         backgroundImage2.GetComponent<SpriteRenderer>().sprite = newSprite;
         float fadeDuration = 0.5f;
         LeanTween.alpha(backgroundImage, 0.0f, fadeDuration).setOnComplete(() =>
@@ -48,9 +52,13 @@ public abstract class Stage
             rearrangeBackgrounds(newSprite);
             dialogue.nextLine();
         });
-        Debug.Log(line);
+        //Debug.Log(line.position);
+        string[] tokens = line.position.Split('-');
+        Debug.Log(tokens.Length);
+        Array.ForEach(tokens, token => Debug.Log(token));
     }
 
+    //helper function - copies bg2 to bg1
     private void rearrangeBackgrounds(Sprite newSprite)
     {
         //Gets component that controls position of BG2
@@ -66,6 +74,8 @@ public abstract class Stage
         LeanTween.alpha(backgroundImage, 1.0f, 0.0f);
     }
 
+
+    //Getters and Setters
     public GameObject getBackgroundImage() {  return backgroundImage; }
     public void setBackgroundImage(GameObject bg) { backgroundImage = bg; }
     public GameObject getBackgroundImage2() {  return backgroundImage2; }
