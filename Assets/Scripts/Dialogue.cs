@@ -78,7 +78,7 @@ public class Dialogue : MonoBehaviour
         dialogueOptions.Add(dialogueOption2);
 
         //setting up background
-        stage = new StageLeft(backgroundImage, backgroundImage2, this);
+        stage = new StageLeft(backgroundImage, backgroundImage2, this, 0.0f, 0.0f);
 
         dialogueOption0.onClick.AddListener(OnDialogueOption0Click);
         dialogueOption1.onClick.AddListener(OnDialogueOption1Click);

@@ -6,14 +6,14 @@ using UnityEngine.EventSystems;
 
 public class StageRight : Stage
 {
-    public StageRight(GameObject backgroundImage, GameObject backgroundImage2, Dialogue dialogue) : base(backgroundImage, backgroundImage2, dialogue)
+    public StageRight(GameObject backgroundImage, GameObject backgroundImage2, Dialogue dialogue, float x, float y) : base(backgroundImage, backgroundImage2, dialogue, x, y)
     {
     }
 
     public override Stage switchSides()
     {
-        getBackgroundImage().transform.LeanMoveLocal(new Vector2(3.0f, 0), 0.4f);
-        return new StageLeft(this.getBackgroundImage(), this.getBackgroundImage2(), getDialogue());
+        getBackgroundImage().transform.LeanMoveLocal(new Vector2(this.getX()+1f, 0), 0.3f);
+        return new StageLeft(this.getBackgroundImage(), this.getBackgroundImage2(), getDialogue(), getX(), getY());
     }
 
     public override Stage transition()

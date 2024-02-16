@@ -15,37 +15,29 @@ public abstract class Stage
     public abstract Stage transition();
     public abstract Stage switchSides();
 
-    public Stage(GameObject backgroundImage, GameObject backgroundImage2, Dialogue dialogue)
+    public Stage(GameObject backgroundImage, GameObject backgroundImage2, Dialogue dialogue, float x, float y)
     {
         this.backgroundImage = backgroundImage;
         this.backgroundImage2 = backgroundImage2;
         this.dialogue = dialogue;
+        this.x = x;
+        this.y = y;
     }
-
-    public void shake()
-    {
-        //not yet implemented
-    }
-
-    public void transitions(GameObject bg)
-    {
-        float fadeDuration = 0.3f;
-        LeanTween.alpha(backgroundImage, 0.0f, fadeDuration);
-    }
-
 
     public void BackgroundTransition(GameObject area, DialogueLine line)
     {
-        Transform transform = getBackgroundImage().GetComponent<Transform>();
+        /*Transform transform = getBackgroundImage().GetComponent<Transform>();
         Vector3 currentPosition = transform.localPosition;
         transform.localPosition = new Vector3(currentPosition.x, currentPosition.y, currentPosition.z);
-        currentPosition = transform.localPosition;
+        currentPosition = transform.localPosition;*/
 
         string bgName = line.content;
-
         Sprite newSprite = Resources.Load<Sprite>("Images/Background/" + bgName);
         backgroundImage2.GetComponent<SpriteRenderer>().sprite = newSprite;
-        float fadeDuration = 0.5f;
+
+        repositionBackground(line);
+
+        float fadeDuration = 0.8f;
         LeanTween.alpha(backgroundImage, 0.0f, fadeDuration).setOnComplete(() =>
         {
             area.GetComponent<Image>().raycastTarget = true;
@@ -53,9 +45,18 @@ public abstract class Stage
             dialogue.nextLine();
         });
         //Debug.Log(line.position);
+        
+    }
+
+    private void repositionBackground(DialogueLine line)
+    {
         string[] tokens = line.position.Split('-');
-        Debug.Log(tokens.Length);
         Array.ForEach(tokens, token => Debug.Log(token));
+        this.x = float.Parse(tokens[0]);
+        this.y = float.Parse(tokens[1]);
+
+        Transform transform2 = backgroundImage2.GetComponent<Transform>();
+        transform2.localPosition = new Vector3(this.x, this.y, 1);
     }
 
     //helper function - copies bg2 to bg1
@@ -74,6 +75,17 @@ public abstract class Stage
         LeanTween.alpha(backgroundImage, 1.0f, 0.0f);
     }
 
+    public void shake()
+    {
+        //not yet implemented
+    }
+
+    public void transitions(GameObject bg)
+    {
+        float fadeDuration = 0.3f;
+        LeanTween.alpha(backgroundImage, 0.0f, fadeDuration);
+    }
+
 
     //Getters and Setters
     public GameObject getBackgroundImage() {  return backgroundImage; }
@@ -81,4 +93,6 @@ public abstract class Stage
     public GameObject getBackgroundImage2() {  return backgroundImage2; }
     public void setBackgroundImage2(GameObject bg) { backgroundImage2 = bg; }
     public Dialogue getDialogue() { return dialogue; }
+    public float getX() { return x; }
+    public float getY() { return y; }
 }
