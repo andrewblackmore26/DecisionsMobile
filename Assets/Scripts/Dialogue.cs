@@ -44,6 +44,7 @@ public class Dialogue : MonoBehaviour
     public float transitionTime = 0.2f;
 
     //Used to alter Buttons corresponding to DialogueLine containing options
+    private ChoicesManager choicesManager;
     private List<Button> dialogueOptions = new List<Button>();
     public Button dialogueOption0;
     public Button dialogueOption1;
@@ -72,17 +73,11 @@ public class Dialogue : MonoBehaviour
         imageRight.transform.localScale = Vector2.zero;
         imageRight2.transform.localScale = Vector2.zero;
 
-        //setting up Options
-        dialogueOptions.Add(dialogueOption0);
-        dialogueOptions.Add(dialogueOption1);
-        dialogueOptions.Add(dialogueOption2);
-
         //setting up background
         stage = new StageLeft(backgroundImage, backgroundImage2, this, 0.0f, 0.0f);
-
-        dialogueOption0.onClick.AddListener(OnDialogueOption0Click);
-        dialogueOption1.onClick.AddListener(OnDialogueOption1Click);
-        dialogueOption2.onClick.AddListener(OnDialogueOption2Click);
+        
+        //setting up choices
+        choicesManager = new ChoicesManager(dialogueOption0, dialogueOption1, dialogueOption2, this);
     
         StartDialogue();
     }
@@ -139,24 +134,11 @@ public class Dialogue : MonoBehaviour
             UpdateCharacterImage();
             StartCoroutine(UpdateDialogueBox());            
         }
-        handleChoices();
+        choicesManager.handleChoices(lines[index]);
         prevChar = lines[index].name;
     }
 
-    // display choices, if any, for this dialogue line
-    private void handleChoices()
-    {
-        if (lines[index].options.Count > 0)
-        {
-            DisplayChoices();
-        }
-        else
-        {
-            dialogueOption0.gameObject.SetActive(false);
-            dialogueOption1.gameObject.SetActive(false);
-            dialogueOption2.gameObject.SetActive(false);
-        }
-    }
+
     
     private void UpdateCharacterImage()
     {
@@ -438,62 +420,11 @@ public class Dialogue : MonoBehaviour
             });
     }
 
-    //----------------------------------------------------------------------------------------------------------------------------------------------
-    //-------------                                             HANDLES CHOICE DISPLAY                                                  ------------
-    //----------------------------------------------------------------------------------------------------------------------------------------------
-    //precondition: Must have choices available
-    private void DisplayChoices()
-    {
-        List<Option> options = lines[index].options;
-        TextMeshProUGUI txt;
-        //defensive check to make sure our UI can support number of choices coming in
-        if (options.Count > 3)
-        {
-            Debug.LogError("More choices were given than can be supported: " + options.Count);
-            foreach (Option option in options)
-            {
-                Debug.LogError(option.content);
-            }
-        }
-
-        int count = 0;
-        // enable and initalize the choices up to the amount of choices for this line of dialogue
-        for (int i = 0; i < options.Count; i++)
-        {
-            txt = dialogueOptions[i].GetComponentInChildren<TextMeshProUGUI>();
-            txt.text = lines[index].options[i].content;
-            dialogueOptions[i].gameObject.SetActive(true);
-            count++;
-        }
-
-        // go through the remaining choices the UI supports and make sure they're hidden
-        while (count < 3)
-        {
-            dialogueOptions[count].gameObject.SetActive(false);
-            count++;
-        }
-    }
-
-    private void OnDialogueOption0Click()
-    {
-        handleDialogueOptionClick(0);
-    }
-
-    private void OnDialogueOption1Click()
-    {
-        handleDialogueOptionClick(1);
-    }
-
-    private void OnDialogueOption2Click()
-    {
-        handleDialogueOptionClick(2);
-    }
-
-    private void handleDialogueOptionClick(int num)
+    //coupled with ChoicesManager
+    public void handleDialogueOptionClick(int num)
     {
         string key = lines[index].options[num].next;
         index = 0;
-        //Debug.Log("Button " + num + " clicked!");
         lines = parser.GetLines(key);
         textComponent.text = string.Empty;
         StartDialogue();
