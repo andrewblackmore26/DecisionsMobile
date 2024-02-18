@@ -323,8 +323,6 @@ public class Dialogue : MonoBehaviour
 
     IEnumerator UpdateDialogueBox()
     {
-        RectTransform rectTransform = dialogueBox.GetComponent<RectTransform>();
-        Vector3 currentPosition = rectTransform.localPosition;
         if (prevChar == lines[index].name)
         {
             AdjustBoxForSameSpeaker(dialogueBox);
@@ -342,8 +340,7 @@ public class Dialogue : MonoBehaviour
     }
 
     void UpdateBottomOfDialogueBox(GameObject image)
-    {
-        
+    {        
         // GET DESIRED HEIGHT
         float extensionAmount = Utils.getDialogueHeight(lines[index]);
 
@@ -420,7 +417,7 @@ public class Dialogue : MonoBehaviour
             });
     }
 
-    //coupled with ChoicesManager
+    //coupled with ChoicesManager - enters new path on option click
     public void handleDialogueOptionClick(int num)
     {
         string key = lines[index].options[num].next;
@@ -430,6 +427,7 @@ public class Dialogue : MonoBehaviour
         StartDialogue();
     }
 
+    //coupled with Stage - goes to next line on background transition
     public void nextLine()
     {
         index++;
