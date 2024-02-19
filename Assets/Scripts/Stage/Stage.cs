@@ -26,11 +26,6 @@ public abstract class Stage
 
     public void BackgroundTransition(GameObject area, DialogueLine line)
     {
-        /*Transform transform = getBackgroundImage().GetComponent<Transform>();
-        Vector3 currentPosition = transform.localPosition;
-        transform.localPosition = new Vector3(currentPosition.x, currentPosition.y, currentPosition.z);
-        currentPosition = transform.localPosition;*/
-
         string bgName = line.content;
         Sprite newSprite = Resources.Load<Sprite>("Images/Background/" + bgName);
         backgroundImage2.GetComponent<SpriteRenderer>().sprite = newSprite;
@@ -44,14 +39,12 @@ public abstract class Stage
             rearrangeBackgrounds(newSprite);
             dialogue.nextLine();
         });
-        //Debug.Log(line.position);
-        
     }
 
     private void repositionBackground(DialogueLine line)
     {
         string[] tokens = line.position.Split('-');
-        Array.ForEach(tokens, token => Debug.Log(token));
+        //Array.ForEach(tokens, token => Debug.Log(token));
         this.x = float.Parse(tokens[0]);
         this.y = float.Parse(tokens[1]);
 

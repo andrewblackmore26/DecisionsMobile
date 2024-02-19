@@ -106,16 +106,12 @@ public class Dialogue : MonoBehaviour
                 StartDialogue();
             }
             else if (Input.GetMouseButtonDown(0) && index < lines.Count && lines[index].next != "")
-            {
-                print("3 trigger");             
+            {           
                 string key = lines[index].next;
                 index = 0;
                 lines = parser.GetLines(key);
                 textComponent.text = string.Empty;
                 StartDialogue();
-            } else
-            {
-                print("END OF THE LINE BUD!");
             }
         } 
     }
