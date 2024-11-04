@@ -11,7 +11,9 @@ public class MainMenuController : MonoBehaviour
     public Button startButton;
     void Start()
     {
-        startButton.onClick.AddListener(StartButtonClick);
+        if (startButton != null) {
+            startButton.onClick.AddListener(StartButtonClick);
+        }     
     }
 
     // Update is called once per frame
@@ -24,5 +26,10 @@ public class MainMenuController : MonoBehaviour
     private void StartButtonClick()
     {
         SceneManager.LoadScene("GameScene1");
+    }
+
+    public void SceneLoader(int SceneIndex)
+    {
+        SceneManager.LoadScene(SceneIndex);
     }
 }

@@ -11,6 +11,11 @@ public class Dialogue : MonoBehaviour
 {
     //UI Areas for handling clicks
     public GameObject dialogueArea;
+    public GameObject menuArea;
+
+    //User to handle Menu Buttons
+    public Button menuButton0;
+    public Button menuButton1;
 
     //Used for loading DialogueLines
     public DialogueParser parser;
@@ -91,6 +96,7 @@ public class Dialogue : MonoBehaviour
         }
         if (Utils.IsPointerOverUIElement(dialogueArea))
         {
+
             // If DialogueBox text has not yet loaded
             if (Input.GetMouseButtonDown(0) && textComponent.text != lines[index].content)
             {
@@ -113,7 +119,16 @@ public class Dialogue : MonoBehaviour
                 textComponent.text = string.Empty;
                 StartDialogue();
             }
-        } 
+        }
+        if (Utils.IsPointerOverUIElement(menuArea))
+        {
+            menuButton0.gameObject.SetActive(true);
+            menuButton1.gameObject.SetActive(true);
+        } else
+        {
+            menuButton0.gameObject.SetActive(false);
+            menuButton1.gameObject.SetActive(false);
+        }
     }
 
     //runs once every DialogueLine
