@@ -19,6 +19,7 @@ public class Dialogue : MonoBehaviour
 
     //Used for loading DialogueLines
     public DialogueParser parser;
+    public DialogueParser2 parser2;
     public List<DialogueLine> lines;
 
     //Used for altering DialogueBox state/text
@@ -68,9 +69,14 @@ public class Dialogue : MonoBehaviour
         index = 0;
         textComponent.text = string.Empty;
 
-        parser = GameObject.Find("DialogueParser").GetComponent<DialogueParser>();
-        lines = parser.GetLines("Start");
-        parser.GetComponent<DialogueParser>().enabled = false;
+        //ORIGINAL PARSER - UNCOMMENT IF NEED TO GO BACK
+        //parser = GameObject.Find("DialogueParser").GetComponent<DialogueParser>();
+        //lines = parser.GetLines("Start");
+        //parser.GetComponent<DialogueParser>().enabled = false;
+
+        parser2 = GameObject.Find("DialogueParser2").GetComponent<DialogueParser2>();
+        lines = parser2.GetLines("Start");
+        parser2.GetComponent<DialogueParser2>().enabled = false;
         Utils = new Utils();
 
         //setting up images
