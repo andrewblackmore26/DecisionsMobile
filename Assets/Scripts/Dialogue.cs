@@ -75,7 +75,18 @@ public class Dialogue : MonoBehaviour
         //parser.GetComponent<DialogueParser>().enabled = false;
 
         parser2 = GameObject.Find("DialogueParser2").GetComponent<DialogueParser2>();
-        lines = parser2.GetLines("Start");
+
+        print("HI");
+        foreach (KeyValuePair<string, List<DialogueLine>> entry in parser2.dialogue)
+        {
+            foreach (DialogueLine line in entry.Value)
+            {
+                print(line.ToString() + " : " + entry.Key);
+            }
+        }
+
+
+        lines = parser2.GetLines("0");
         parser2.GetComponent<DialogueParser2>().enabled = false;
         Utils = new Utils();
 
