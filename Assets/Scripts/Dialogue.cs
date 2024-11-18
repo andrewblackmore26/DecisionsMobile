@@ -64,49 +64,37 @@ public class Dialogue : MonoBehaviour
     private int prevPosR = 0;
     private Image currEmotion;
 
+    //CONTROLS THE START
+    private bool isInitialised = false;
+    public string mainCharacter = "";
+
     void Start()
     {
         index = 0;
         textComponent.text = string.Empty;
-
+        Utils = new Utils();
+        choicesManager = new ChoicesManager(dialogueOption0, dialogueOption1, dialogueOption2, this);
         //ORIGINAL PARSER - UNCOMMENT IF NEED TO GO BACK
         //parser = GameObject.Find("DialogueParser").GetComponent<DialogueParser>();
         //lines = parser.GetLines("Start");
         //parser.GetComponent<DialogueParser>().enabled = false;
 
         parser2 = GameObject.Find("DialogueParser2").GetComponent<DialogueParser2>();
+        StartCoroutine(WaitForDialogueLoad());
 
-        print("HI");
-        foreach (KeyValuePair<string, List<DialogueLine>> entry in parser2.dialogue)
-        {
-            foreach (DialogueLine line in entry.Value)
-            {
-                print(line.ToString() + " : " + entry.Key);
-            }
-        }
-
-
-        lines = parser2.GetLines("0");
-        parser2.GetComponent<DialogueParser2>().enabled = false;
-        Utils = new Utils();
-
-        //setting up images
-        imageLeft.transform.localScale = Vector2.zero;
-        imageRight.transform.localScale = Vector2.zero;
-        imageRight2.transform.localScale = Vector2.zero;
-
-        //setting up background
-        stage = new StageLeft(backgroundImage, backgroundImage2, this, 0.0f, 0.0f);
+       
         
-        //setting up choices
-        choicesManager = new ChoicesManager(dialogueOption0, dialogueOption1, dialogueOption2, this);
-    
-        StartDialogue();
+
+        
     }
 
     //if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended && validInput) - for mobile, !EventSystem.current.IsPointerOverGameObject() for pc
     void Update()
     {
+        if (!isInitialised)
+        {
+            return;
+        }
         if (Input.GetKeyDown(KeyCode.D))
         {
             //CloseBox(dialogueBox);
@@ -151,13 +139,22 @@ public class Dialogue : MonoBehaviour
     //runs once every DialogueLine
     void StartDialogue()
     {
-        if (lines[index].name == "T")
+        print(lines[index]);
+        if (lines[index].type == "background")
         {
             //dialogueArea.raycast = false;
             PlayExitAnimation();
             CloseBox(dialogueBox);
             stage.BackgroundTransition(dialogueArea, lines[index]);
-        } else
+        } else if (lines[index].type == "mainCharacter")
+        {
+            mainCharacter = lines[index].name;
+            Utils.mainCharacter = lines[index].name;
+            nextLine();
+        } else if (lines[index].type == "gameOver")
+        {
+            //end game, give player choice to restart from checkpoint
+        } else 
         {
             UpdateCharacterImage();
             StartCoroutine(UpdateDialogueBox());            
@@ -170,7 +167,15 @@ public class Dialogue : MonoBehaviour
     
     private void UpdateCharacterImage()
     {
-        sprite = Resources.Load<Sprite>("Images/" + lines[index].name + "/" + lines[index].position + "/" + Utils.getEmotion(lines[index]));
+        string position = "";
+        if (lines[index].name == mainCharacter)
+        {
+            position = "L";
+        } else
+        {
+            position = "R";
+        }
+        sprite = Resources.Load<Sprite>("Images/Characters/" + lines[index].name + "/" + position + "/" + Utils.getEmotion(lines[index]));
         dialogueArea.GetComponent<Image>().raycastTarget = false;
         //It's a different character saying a line
         if (prevChar != lines[index].name)
@@ -180,12 +185,12 @@ public class Dialogue : MonoBehaviour
         }
         else //when character is the same
         {
-            if (lines[index].position == "L")
+            if (lines[index].name == mainCharacter)
             {
                 StartCoroutine(ChangeColor(emotionLeft));
                 StartCoroutine(ChangeChar(charLeft));
             }
-            else if (lines[index].position == "R")
+            else
             {
                 if (prevPosR == 1)
                 {
@@ -221,13 +226,13 @@ public class Dialogue : MonoBehaviour
                 imageRight2.transform.LeanMoveLocal(new Vector2(971, -292), 0.5f);
                 imageRight2.transform.LeanScale(Vector2.zero, 0.5f);
             }
-        }        
-        prevPos = lines[index].position;
+        }
+        prevPos = lines[index].name == mainCharacter ? "L" : "R";
     }
 
     private void PlayEntryAnimation()
     {
-        if (lines[index].position == "L")
+        if (lines[index].name == mainCharacter)
         {
             if (stage is StageRight)
             {
@@ -235,7 +240,7 @@ public class Dialogue : MonoBehaviour
             }
             characterEntry(imageLeft);
         }
-        else if (lines[index].position == "R")
+        else
         {
             if (stage is StageLeft)
             {
@@ -256,12 +261,22 @@ public class Dialogue : MonoBehaviour
 
     private void characterEntry(Image image)
     {
+        string position = "";
+        if (lines[index].name == mainCharacter)
+        {
+            position = "L";
+        }
+        else
+        {
+            position = "R";
+        }
+
         // reset emotion on entry
         Color targetColor;
         ColorUtility.TryParseHtmlString("#00727E", out targetColor);
-        Sprite def = Resources.Load<Sprite>("Images/" + lines[index].name + "/" + lines[index].position + "/Default");
+        Sprite def = Resources.Load<Sprite>("Images/Characters/" + lines[index].name + "/" + position + "/Default");
 
-        if (lines[index].position == "L")
+        if (lines[index].name == mainCharacter)
         {
             charLeft.GetComponent<Image>().sprite = def;
             emotionLeft.color = targetColor;
@@ -271,7 +286,7 @@ public class Dialogue : MonoBehaviour
                 StartCoroutine(ChangeChar(charLeft));
             });
         }
-        else if (lines[index].position == "R")
+        else
         {
             if (prevPosR < 2)
             {
@@ -459,6 +474,30 @@ public class Dialogue : MonoBehaviour
     public void nextLine()
     {
         index++;
+        StartDialogue();
+    }
+
+    private IEnumerator WaitForDialogueLoad()
+    {
+        while (!parser2.isDialogueLoaded)
+        {
+            yield return null;  // Wait for next frame
+        }
+
+        lines = parser2.GetLines("0");
+        parser2.GetComponent<DialogueParser2>().enabled = false;
+
+        //setting up images
+        imageLeft.transform.localScale = Vector2.zero;
+        imageRight.transform.localScale = Vector2.zero;
+        imageRight2.transform.localScale = Vector2.zero;
+
+        //setting up background
+        stage = new StageLeft(backgroundImage, backgroundImage2, this, 0.0f, 0.0f);
+
+        //setting up choices
+        
+        isInitialised = true;
         StartDialogue();
     }
 }

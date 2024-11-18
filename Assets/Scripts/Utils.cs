@@ -8,19 +8,22 @@ using UnityEngine.EventSystems;
 
 public class Utils
 {
+    public string mainCharacter;
 
     public void RepositionBox(GameObject box, DialogueLine line)
     {
-        if (line.position == "L")
+        if (line.name == mainCharacter)
         {
             box.transform.LeanMoveLocal(new Vector2(-70, 0), 0.0f);
-        } else if (line.position == "R")
-        {
-            box.transform.LeanMoveLocal(new Vector2(70, 0), 0.0f);
-        } else if (line.position == "N")
+        }
+        else if (line.name == "N")
         {
             box.transform.LeanMoveLocal(new Vector2(0, 400), 0.0f);
         }
+        else
+        {
+            box.transform.LeanMoveLocal(new Vector2(70, 0), 0.0f);
+        } 
     }
 
     //--------------------------------------------------------------------------------------------------
@@ -102,14 +105,19 @@ public class Utils
         }
         else if (line.content.Length < 90)
         {
-            extensionAmount = 270.0f;
+            extensionAmount = 275.0f;
         }
         else if (line.content.Length < 120)
         {
-            extensionAmount = 330.0f;
-        } else
+            extensionAmount = 345.0f;
+        }
+        else if (line.content.Length < 150)
         {
-            extensionAmount = 390.0f;
+            extensionAmount = 420.0f;
+        }
+        else
+        {
+            extensionAmount = 490.0f;
         }
 
         return extensionAmount;

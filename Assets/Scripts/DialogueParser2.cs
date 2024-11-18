@@ -11,6 +11,7 @@ using System;
 public class DialogueParser2 : MonoBehaviour
 {
     public Dictionary<string, List<DialogueLine>> dialogue = new Dictionary<string, List<DialogueLine>>();
+    public bool isDialogueLoaded = false;
 
     void Start()
     {
@@ -19,8 +20,7 @@ public class DialogueParser2 : MonoBehaviour
         //sceneNum = Regex.Replace(sceneNum, "[^0-9]", "");
         //file += sceneNum;
         file += ".txt";
-        print(file);
-        LoadDialogues(file);
+        StartCoroutine(LoadDialogues(file));
 
         //used to print out all lines of content in the chapter
         /*foreach (KeyValuePair<string, List<DialogueLine>> entry in dialogue)
@@ -38,7 +38,7 @@ public class DialogueParser2 : MonoBehaviour
 
     }
 
-    void LoadDialogues(string filename)
+    private IEnumerator LoadDialogues(string filename)
     {
         string line;
         string key = "";
@@ -50,7 +50,7 @@ public class DialogueParser2 : MonoBehaviour
                 line = r.ReadLine();
                 if (line != null || !string.IsNullOrEmpty(line))
                 {
-                    
+
                     if (line[0] == '*')
                     {
                         line = line[1..^1];
@@ -116,11 +116,13 @@ public class DialogueParser2 : MonoBehaviour
                             addEntry(key, lineEntry);
                         }
                     }
-                }                
+                }
             }
             while (line != null);
             r.Close();
         }
+        isDialogueLoaded = true;
+        yield return null;
     }
 
     void addEntry(string key, DialogueLine lineEntry)
